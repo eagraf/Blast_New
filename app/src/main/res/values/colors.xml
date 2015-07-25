@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Various color values-->
+    <color name="DeepPurple500">#673AB7</color>
+    <color name="DeepPurple800">#4527A0</color>
+    <color name="Teal500">#009688</color>
+
+    <color name="Black">#000000</color>
+    <color name="White">#FFFFFF</color>
+    <color name="Clear">#00000000</color>
+</resources>
