@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FragmentTransaction fragmentTransaction;
 
     private BlastFragment blastFragment;
+    private GroupFragment groupFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //Various fragments used by main activity.
         blastFragment = new BlastFragment();
+        groupFragment = new GroupFragment();
 
         //Start in the inbox fragment.
         fragmentTransaction.add(R.id.main_content_frame, blastFragment);
@@ -87,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.navigation_reminder_item:
                 break;
             case R.id.navigation_group_item:
+                fragmentTransaction.replace(R.id.main_content_frame, groupFragment);
+                fragmentTransaction.commit();
                 break;
             case R.id.navigation_contact_item:
                 break;
