@@ -25,4 +25,9 @@
     <string name="dialog_done">Done</string>
     <string name="dialog_cancel">Cancel</string>
 
+    <!--Action Button Strings-->
+    <string name="add_group">Add Group</string>
+
+    <string name="find_groups">Find Groups</string>
+
 </resources>
