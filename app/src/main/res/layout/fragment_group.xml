@@ -29,6 +29,7 @@ android:layout_height="match_parent">
         android:layout_marginRight="48dp"
         android:layout_marginBottom="32dp"
         android:layout_gravity="bottom|right"
+        android:onClick="newGroup"
         app:elevation="4dp"
         app:borderWidth="0dp"/>
 

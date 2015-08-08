@@ -14,7 +14,9 @@ import android.view.View;
 import android.widget.TextView;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+        NewGroupDialogFragment.NewGroupDialogListener {
+
     private DrawerLayout mDrawerLayout;
     private NavigationView mDrawerView;
 
@@ -111,5 +113,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public DrawerLayout getDrawerLayout() {
         return mDrawerLayout;
+    }
+
+    //Create a new group
+    public void newGroup(View v) {
+        // Create an instance of the new group dialog fragment and show it
+        NewGroupDialogFragment dialog = new NewGroupDialogFragment();
+        dialog.setTitle(getResources().getString(R.string.dialog_new_group));
+        dialog.show(getSupportFragmentManager(), "NewGroupDialogFragment");
+    }
+
+    @Override
+    public void onDialogPositiveClick(NewGroupDialogFragment dialog, String groupName) {
+        //Blank method for now
+    }
+
+    @Override
+    //Negative click on New Group Dialog
+    public void onDialogNegativeClick(NewGroupDialogFragment dialog) {
+        // User touched the dialog's negative button
+        // Nothing happens
     }
 }

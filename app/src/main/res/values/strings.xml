@@ -14,4 +14,15 @@
     <string name="navigation_settings_item">Settings</string>
     <string name="navigation_info_item">Information</string>
     <string name="navigation_help_item">Help/Feedback</string>
+
+    <!--Drawer Stuff-->
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+    <!--Dialog Strings-->
+    <string name="dialog_new_group">New Group</string>
+    <string name="dialog_new_note">New Note</string>
+    <string name="dialog_done">Done</string>
+    <string name="dialog_cancel">Cancel</string>
+
 </resources>
