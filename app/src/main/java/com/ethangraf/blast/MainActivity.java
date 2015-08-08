@@ -1,5 +1,7 @@
 package com.ethangraf.blast;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,24 +18,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout mDrawerLayout;
     private NavigationView mDrawerView;
 
+    private FragmentManager fragmentManager;
+    private FragmentTransaction fragmentTransaction;
+
+    private BlastFragment blastFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //Set up the toolbar
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-
-        //Enable ActionBar app icon to behave as action to toggle nav drawer
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mToolbar.setNavigationIcon(R.mipmap.ic_menu_white_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mDrawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
 
         //Initialize some navigation drawer stuff.
         mDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_layout);
@@ -43,6 +36,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Set the navigation drawer information.
         ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.name)).setText("Name");
         ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.email)).setText("Email");
+
+        //Initialize the fragment manager.
+        fragmentManager = getFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+
+        //Various fragments used by main activity.
+        blastFragment = new BlastFragment();
+
+        //Start in the inbox fragment.
+        fragmentTransaction.add(R.id.main_content_frame, blastFragment);
+        fragmentTransaction.commit();
     }
 
     @Override
@@ -71,8 +75,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //Handle click events on navigation drawer items.
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         menuItem.setChecked(true);
+        fragmentTransaction = getFragmentManager().beginTransaction();
         switch (menuItem.getItemId()) {
             case R.id.navigation_inbox_item:
+                //Open the inbox fragment.
+                fragmentTransaction.replace(R.id.main_content_frame, blastFragment);
+                fragmentTransaction.commit();
                 break;
             case R.id.navigation_event_item:
                 break;
@@ -95,5 +103,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         mDrawerLayout.closeDrawers();
         return true;
+    }
+
+    public DrawerLayout getDrawerLayout() {
+        return mDrawerLayout;
     }
 }

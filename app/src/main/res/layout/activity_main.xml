@@ -5,20 +5,15 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <include layout="@layout/toolbar"
-            android:id="@+id/toolbar"/>
 
         <!--Where the fragment goes-->
         <FrameLayout
             android:id="@+id/main_content_frame"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/toolbar"/>
+            android:layout_height="match_parent"/>
 
     </RelativeLayout>
 
