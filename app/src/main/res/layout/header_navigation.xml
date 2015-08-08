@@ -5,7 +5,7 @@
     android:background="@drawable/navigationbackground"
     android:orientation="vertical"
     android:id="@+id/navigation_header"
-    android:weightSum="1" >
+    android:weightSum="1 " >
 
         <TextView
             android:id="@+id/name"
@@ -31,6 +31,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="5dp"
+            android:layout_marginBottom="8dp"
             android:textSize="14sp"
             android:textStyle="normal" />
 </RelativeLayout>

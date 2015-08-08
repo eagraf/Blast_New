@@ -3,4 +3,15 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <!--Navigation Drawer strings-->
+    <string name="navigation_inbox_item">Inbox</string>
+    <string name="navigation_event_item">Events</string>
+    <string name="navigation_reminder_item">Reminders</string>
+    <string name="navigation_group_item">Groups</string>
+    <string name="navigation_contact_item">Contacts</string>
+    <string name="navigation_profile_item">Profile</string>
+    <string name="navigation_settings_item">Settings</string>
+    <string name="navigation_info_item">Information</string>
+    <string name="navigation_help_item">Help/Feedback</string>
 </resources>

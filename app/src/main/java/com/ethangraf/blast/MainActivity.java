@@ -59,8 +59,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         switch(id) {
-            case R.id.action_settings:
-                return true;
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
@@ -74,14 +72,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         menuItem.setChecked(true);
         switch (menuItem.getItemId()) {
-            //Go to the notification list.
-            case R.id.notification_list_item:
+            case R.id.navigation_inbox_item:
                 break;
-            //Go to the group list.
-            case R.id.group_list_item:
+            case R.id.navigation_event_item:
                 break;
-            //Go to the find groups list.
-            case R.id.find_groups_list_item:
+            case R.id.navigation_reminder_item:
+                break;
+            case R.id.navigation_group_item:
+                break;
+            case R.id.navigation_contact_item:
+                break;
+            case R.id.navigation_profile_item:
+                break;
+            case R.id.navigation_settings_item:
+                break;
+            case R.id.navigation_info_item:
+                break;
+            case R.id.navigation_help_item:
                 break;
             default:
                 return true;
