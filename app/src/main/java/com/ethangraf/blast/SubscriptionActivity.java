@@ -9,8 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import java.util.Arrays;
-
 /**
  * Created by Ethan on 8/8/2015.
  */
@@ -18,8 +16,6 @@ public class SubscriptionActivity extends AppCompatActivity {
     private RecyclerView mSubscriptionListView;
     private RecyclerView.LayoutManager mMessageListLayoutManager;
     private SubscriptionAdapter mSubscriptionAdapter;
-
-    private static final String planets[] = new String[] {"Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,14 +46,11 @@ public class SubscriptionActivity extends AppCompatActivity {
         mSubscriptionListView.setLayoutManager(mMessageListLayoutManager);
 
         // specify an adapter (see also next example)
-        mSubscriptionAdapter = new SubscriptionAdapter(Arrays.asList(planets));
+        mSubscriptionAdapter = new SubscriptionAdapter();
         mSubscriptionListView.setAdapter(mSubscriptionAdapter);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mSubscriptionListView.setHasFixedSize(true);
-
-
     }
-
 }

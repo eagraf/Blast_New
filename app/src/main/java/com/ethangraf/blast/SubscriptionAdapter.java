@@ -1,5 +1,6 @@
 package com.ethangraf.blast;
 
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,10 +19,22 @@ import java.util.List;
  */
 public class SubscriptionAdapter extends RecyclerView.Adapter<SubscriptionAdapter.ViewHolder> {
 
-    private List<String> mDataSet;
+    private List<Group> mDataSet = new ArrayList<>();
 
-    public SubscriptionAdapter(List<String> data) {
-        this.mDataSet = data;
+    public SubscriptionAdapter() {
+        new AsyncTask<Void,Void,Void>(){
+            @Override
+            protected Void doInBackground(Void... params) {
+                DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+                mDataSet = MainActivity.mapper.scan(Group.class, scanExpression);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                notifyDataSetChanged();
+            }
+        }.execute();
     }
 
     // Provide a reference to the views for each data item
@@ -53,8 +69,8 @@ public class SubscriptionAdapter extends RecyclerView.Adapter<SubscriptionAdapte
     public void onBindViewHolder(SubscriptionAdapter.ViewHolder viewHolder, int i) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        viewHolder.mSecondLine.setText(mDataSet.get(i));
-        viewHolder.mFirstLine.setText(mDataSet.get(i));
+        viewHolder.mSecondLine.setText(mDataSet.get(i).getGroupID());
+        viewHolder.mFirstLine.setText(mDataSet.get(i).getDisplayName());
     }
 
     @Override

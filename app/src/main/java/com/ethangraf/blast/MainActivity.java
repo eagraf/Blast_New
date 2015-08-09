@@ -2,16 +2,23 @@ package com.ethangraf.blast;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.support.design.widget.NavigationView;
 import android.view.View;
 import android.widget.TextView;
+
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+
+import java.util.UUID;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
@@ -25,11 +32,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private BlastFragment blastFragment;
     private GroupFragment groupFragment;
+    public static DynamoDBMapper mapper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Initialize the Amazon Cognito credentials provider
+        CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
+                getApplicationContext(),
+                "us-east-1:f08cf8f2-5a11-4756-a62a-97d65306a831", // Identity Pool ID
+                Regions.US_EAST_1 // Region
+        );
+        AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(credentialsProvider);
+        mapper = new DynamoDBMapper(ddbClient);
+
 
         //Initialize some navigation drawer stuff.
         mDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_layout);
@@ -125,7 +143,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onDialogPositiveClick(NewGroupDialogFragment dialog, String groupName) {
-        //Blank method for now
+        Group group = new Group();
+
+        group.setGroupID(UUID.randomUUID().toString());
+        group.setDisplayName(groupName);
+
+        new Save().execute(group);
     }
 
     @Override
@@ -133,5 +156,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onDialogNegativeClick(NewGroupDialogFragment dialog) {
         // User touched the dialog's negative button
         // Nothing happens
+    }
+
+    private class Save extends AsyncTask<Object,Void,Void>{
+        @Override
+        protected Void doInBackground(Object[] params) {
+            for(Object o:params){
+                mapper.save(o);
+            }
+            return null;
+        }
     }
 }
