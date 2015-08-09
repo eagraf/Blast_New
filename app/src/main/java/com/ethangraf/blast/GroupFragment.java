@@ -36,6 +36,7 @@ public class GroupFragment extends Fragment {
         //Set up the toolbar
         Toolbar mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.groups);
 
         //Enable ActionBar app icon to behave as action to toggle nav drawer
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);

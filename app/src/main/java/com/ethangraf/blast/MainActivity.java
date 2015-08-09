@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FragmentTransaction fragmentTransaction;
 
     private BlastFragment blastFragment;
+    private EventFragment eventFragment;
+    private ReminderFragment reminderFragment;
     private GroupFragment groupFragment;
 
     public static DynamoDBMapper mapper;
@@ -69,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Various fragments used by main activity.
         blastFragment = new BlastFragment();
         groupFragment = new GroupFragment();
+        eventFragment = new EventFragment();
+        reminderFragment = new ReminderFragment();
 
         //Start in the inbox fragment.
         fragmentTransaction.add(R.id.main_content_frame, blastFragment);
@@ -109,8 +113,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragmentTransaction.commit();
                 break;
             case R.id.navigation_event_item:
+                fragmentTransaction.replace(R.id.main_content_frame, eventFragment);
+                fragmentTransaction.commit();
                 break;
             case R.id.navigation_reminder_item:
+                fragmentTransaction.replace(R.id.main_content_frame, reminderFragment);
+                fragmentTransaction.commit();
                 break;
             case R.id.navigation_group_item:
                 fragmentTransaction.replace(R.id.main_content_frame, groupFragment);

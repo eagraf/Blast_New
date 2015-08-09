@@ -27,6 +27,7 @@ public class SettingsActivity extends AppCompatActivity {
         //Set up the toolbar
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle(R.string.settings);
 
         //Sets icon to go back to previous activity.
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
