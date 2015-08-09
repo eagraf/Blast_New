@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private BlastFragment blastFragment;
     private GroupFragment groupFragment;
-    private static DynamoDBMapper mapper;
+    public static DynamoDBMapper mapper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
