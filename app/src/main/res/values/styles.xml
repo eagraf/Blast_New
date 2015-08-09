@@ -19,4 +19,16 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="TabStyle" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">@color/Teal200</item>
+        <item name="tabTextAppearance">@style/TabTextStyle</item>
+        <item name="tabSelectedTextColor">@color/Teal200</item>
+    </style>
+
+    <style name="TabTextStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/White</item>
+        <item name="textAllCaps">true</item>
+    </style>
+
 </resources>
