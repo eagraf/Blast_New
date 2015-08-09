@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 /**
  * Created by Ethan on 8/8/2015.
@@ -52,5 +53,11 @@ public class SubscriptionActivity extends AppCompatActivity {
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mSubscriptionListView.setHasFixedSize(true);
+    }
+
+    public void openMessageActivity(View view) {
+        Intent intent = new Intent(this, MessageActivity.class);
+        intent.putExtra(MainActivity.MESSAGE_VIEW_GROUP_UID, ((TextView) view.findViewById(R.id.secondLine)).getText().toString());
+        startActivity(intent);
     }
 }
