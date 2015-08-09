@@ -14,10 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 
 import java.util.UUID;
 
@@ -45,15 +42,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /*
         // Initialize the Amazon Cognito credentials provider
-        CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
+        final CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
                 getApplicationContext(),
                 "us-east-1:f08cf8f2-5a11-4756-a62a-97d65306a831", // Identity Pool ID
                 Regions.US_EAST_1 // Region
         );
-        AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(credentialsProvider);
-        mapper = new DynamoDBMapper(ddbClient);
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
+                AccountManager am = AccountManager.get(MainActivity.this);
+                android.accounts.Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+                String token = null;
+                Log.i("MA", accounts[0].name+"");
+                try {
+                    token = GoogleAuthUtil.getToken(MainActivity.this, accounts[0].name,
+                            "audience:server:client_id:732247720107-c6tfotldj8qll205i6u65f3n54qphmo9.apps.googleusercontent.com");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (GoogleAuthException e) {
+                    e.printStackTrace();
+                }
 
+                AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(credentialsProvider);
+                mapper = new DynamoDBMapper(ddbClient);
+            }
+        }).start();
+*/
 
         //Initialize some navigation drawer stuff.
         mDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_layout);
