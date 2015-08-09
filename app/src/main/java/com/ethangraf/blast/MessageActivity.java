@@ -94,6 +94,26 @@ public class MessageActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_subscribe, menu);
+        final MenuItem switchItem = menu.findItem(R.id.subscribe_switch_item);
+        final MenuItem textItem = menu.findItem(R.id.subscribe_text_item);
+
+        //Create behaviour for the subscription switch.
+        Switch subscribeSwitch = (Switch) switchItem.getActionView().findViewById(R.id.subscription_switch);
+        subscribeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // The toggle is enabled.
+                    textItem.setTitle("Subscribed");
+                    Toast.makeText(MessageActivity.this, "Subscribed to group.", Toast.LENGTH_LONG).show();
+                } else {
+                    // The toggle is disabled
+                    textItem.setTitle("Subscribe");
+                    Toast.makeText(MessageActivity.this, "Unsubscribed from group.", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
         return true;
     }
 
