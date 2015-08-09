@@ -1,0 +1,93 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar"/>
+
+    <!-- A RecyclerView with some commonly used attributes -->
+    <!--This is the main list of messages-->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/message_list_view"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/toolbar" />
+
+    <RelativeLayout android:id="@+id/post_view"
+        android:layout_width="match_parent"
+        android:layout_height="98dp"
+        android:layout_gravity="bottom"
+        android:visibility="visible"
+        android:gravity="bottom"
+        android:layout_alignParentBottom="true">
+
+        <!--The main floating action button-->
+        <android.support.design.widget.FloatingActionButton
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/post_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_send_white_24dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="36dp"
+            android:layout_gravity="bottom|right"
+            android:onClick="postMessage"
+            app:elevation="4dp"
+            app:borderWidth="0dp"/>
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="64dp"
+            android:id="@+id/body"
+            android:layout_gravity="center_horizontal|bottom"
+            android:autoText="false"
+            android:background="@color/White"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:hint="Body"
+            android:paddingLeft="32dp"
+            android:paddingRight="32dp" />
+
+        <View android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="#E0E0E0"
+            android:layout_gravity="bottom"
+            android:layout_above="@+id/body"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/divider1"
+            android:focusableInTouchMode="true" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:id="@+id/subject"
+            android:layout_above="@+id/divider1"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:background="@color/White"
+            android:hint="Subject"
+            android:paddingLeft="32dp"
+            android:paddingRight="32dp" />
+
+        <View android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="#E0E0E0"
+            android:layout_gravity="bottom"
+            android:layout_above="@+id/subject"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/divider0"
+            android:focusableInTouchMode="true" />
+
+    </RelativeLayout>
+</RelativeLayout>

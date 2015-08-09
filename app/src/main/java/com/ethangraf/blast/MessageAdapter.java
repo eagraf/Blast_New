@@ -17,24 +17,12 @@ import java.util.List;
 /**
  * Created by Ethan on 8/8/2015.
  */
-public class SubscriptionAdapter extends RecyclerView.Adapter<SubscriptionAdapter.ViewHolder> {
+public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder>{
 
-    private List<Group> mDataSet = new ArrayList<>();
+    private List<String> mDataSet = new ArrayList<>();
 
-    public SubscriptionAdapter() {
-        new AsyncTask<Void,Void,Void>(){
-            @Override
-            protected Void doInBackground(Void... params) {
-                DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
-                mDataSet = MainActivity.mapper.scan(Group.class, scanExpression);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                notifyDataSetChanged();
-            }
-        }.execute();
+    public MessageAdapter(List<String> data) {
+       this.mDataSet = data;
     }
 
     // Provide a reference to the views for each data item
@@ -55,9 +43,9 @@ public class SubscriptionAdapter extends RecyclerView.Adapter<SubscriptionAdapte
 
     //Create new views (invoked by the layout manager)
     @Override
-    public SubscriptionAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public MessageAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         // create a new view
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.group_list_item, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.inbox_list_item, viewGroup, false);
         // set the view's size, margins, paddings and layout parameters
 
         ViewHolder vh = new ViewHolder((RelativeLayout) v);
@@ -66,11 +54,11 @@ public class SubscriptionAdapter extends RecyclerView.Adapter<SubscriptionAdapte
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(SubscriptionAdapter.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(MessageAdapter.ViewHolder viewHolder, int i) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        viewHolder.mSecondLine.setText(mDataSet.get(i).getGroupID());
-        viewHolder.mFirstLine.setText(mDataSet.get(i).getDisplayName());
+        viewHolder.mSecondLine.setText(mDataSet.get(i));
+        viewHolder.mFirstLine.setText(mDataSet.get(i));
     }
 
     @Override
