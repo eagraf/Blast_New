@@ -31,10 +31,6 @@
                 android:id="@+id/navigation_contact_item"
                 android:icon="@mipmap/ic_contacts_black_24dp"
                 android:title="@string/navigation_contact_item"/>
-            <item
-                android:id="@+id/navigation_profile_item"
-                android:icon="@mipmap/ic_person_black_24dp"
-                android:title="@string/navigation_profile_item"/>
         </menu>
     </item>
 
@@ -45,10 +41,6 @@
                 android:id="@+id/navigation_settings_item"
                 android:icon="@mipmap/ic_settings_black_24dp"
                 android:title="@string/navigation_settings_item"/>
-            <item
-                android:id="@+id/navigation_info_item"
-                android:icon="@mipmap/ic_info_black_24dp"
-                android:title="@string/navigation_info_item"/>
             <item
                 android:id="@+id/navigation_help_item"
                 android:icon="@mipmap/ic_help_black_24dp"

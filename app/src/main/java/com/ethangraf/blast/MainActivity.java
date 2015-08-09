@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private BlastFragment blastFragment;
     private GroupFragment groupFragment;
+
     public static DynamoDBMapper mapper;
 
     public final static String MESSAGE_VIEW_GROUP_UID = "com.ethangraf.blast.MESSAGE_VIEW_GROUP_NAME";
@@ -117,11 +118,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.navigation_contact_item:
                 break;
-            case R.id.navigation_profile_item:
-                break;
             case R.id.navigation_settings_item:
-                break;
-            case R.id.navigation_info_item:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
                 break;
             case R.id.navigation_help_item:
                 break;
