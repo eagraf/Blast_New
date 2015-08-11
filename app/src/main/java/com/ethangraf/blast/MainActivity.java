@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Nothing happens
     }
 
-    private class Save extends AsyncTask<Object,Void,Void>{
+    public static class Save extends AsyncTask<Object,Void,Void>{
         @Override
         protected Void doInBackground(Object[] params) {
             for(Object o:params){

@@ -17,7 +17,7 @@ public class Message {
     String body;
 
 
-    @DynamoDBAttribute(attributeName = "body")
+    @DynamoDBAttribute(attributeName = "Body")
     public String getBody() {
         return body;
     }

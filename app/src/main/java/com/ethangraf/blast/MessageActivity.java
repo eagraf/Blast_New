@@ -20,7 +20,11 @@ import android.widget.Toast;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
 
-import java.util.Arrays;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by Ethan on 8/8/2015.
@@ -62,8 +66,12 @@ public class MessageActivity extends AppCompatActivity {
             protected Void doInBackground(Void... params) {
                 DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
                 MessageActivity.this.group = MainActivity.mapper.load(Group.class, uid);
-                MessageActivity.this.getSupportActionBar().setTitle(group.getDisplayName());
                 return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                MessageActivity.this.getSupportActionBar().setTitle(group.getDisplayName());
             }
         }.execute();
 
@@ -73,7 +81,7 @@ public class MessageActivity extends AppCompatActivity {
         mMessageView.setLayoutManager(mMessageLayoutManager);
 
         // specify an adapter (see also next example)
-        mMessageAdapter = new MessageAdapter(Arrays.asList(planets));
+        mMessageAdapter = new MessageAdapter(uid);
         mMessageView.setAdapter(mMessageAdapter);
 
         // use this setting to improve performance if you know that changes
@@ -120,10 +128,25 @@ public class MessageActivity extends AppCompatActivity {
     public void postMessage(View view) {
         EditText subject = (EditText) findViewById(R.id.subject);
         EditText body = (EditText) findViewById(R.id.body);
+
+        //Get time and convert to string for DatePosted
+        Date now = Calendar.getInstance().getTime();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String datePosted = df.format(now);
+
+        //Post message to AWS here
+        Message msg = new Message();
+        msg.setGroupID(group.getGroupID());
+        msg.setSubject(subject.getText().toString());
+        msg.setBody(body.getText().toString());
+        msg.setDatePosted(datePosted);
+
+        new MainActivity.Save().execute(msg);
+
+        //Clear text views
         subject.setText("");
         body.setText("");
-
-        //Post message here
 
         //Close the keyboard.
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
