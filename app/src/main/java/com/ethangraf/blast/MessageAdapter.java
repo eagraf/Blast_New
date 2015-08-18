@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +19,24 @@ import java.util.List;
  */
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder>{
 
-    private List<String> mDataSet = new ArrayList<>();
+    private List<Message> mDataSet = new ArrayList<>();
 
-    public MessageAdapter(List<String> data) {
-       this.mDataSet = data;
-    }
+    public MessageAdapter(final String uid) {
+        new AsyncTask<Void,Void,Void>(){
+            @Override
+            protected Void doInBackground(Void... params) {
+                Message model = new Message();
+                model.setGroupID(uid);
+                DynamoDBQueryExpression queryExpression = new DynamoDBQueryExpression().withHashKeyValues(model);
+                mDataSet = MainActivity.mapper.query(Message.class, queryExpression);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                notifyDataSetChanged();
+            }
+        }.execute();    }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -57,8 +70,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public void onBindViewHolder(MessageAdapter.ViewHolder viewHolder, int i) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        viewHolder.mSecondLine.setText(mDataSet.get(i));
-        viewHolder.mFirstLine.setText(mDataSet.get(i));
+        viewHolder.mSecondLine.setText(mDataSet.get(i).getBody());
+        viewHolder.mFirstLine.setText(mDataSet.get(i).getSubject());
     }
 
     @Override
