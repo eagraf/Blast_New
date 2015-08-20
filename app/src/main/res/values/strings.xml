@@ -35,4 +35,10 @@
     <string name="events">Events</string>
     <string name="reminders">Reminders</string>
 
+    <string name="options">Options</string>
+
+    <!--Menu Options-->
+    <string name="menu_people">People &amp; Options</string>
+    <string name="menu_archive">Archive</string>
+    <string name="menu_delete">Delete</string>
 </resources>

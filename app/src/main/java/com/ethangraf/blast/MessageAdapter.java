@@ -45,11 +45,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         // each data item is just a string in this case
         public TextView mFirstLine;
         public TextView mSecondLine;
+        public TextView mDate;
         public ImageView mProfileImage;
         public ViewHolder(RelativeLayout v) {
             super(v);
             mFirstLine = (TextView) v.findViewById(R.id.firstLine);
             mSecondLine = (TextView) v.findViewById(R.id.secondLine);
+            mDate = (TextView) v.findViewById(R.id.date);
             mProfileImage = (ImageView) v.findViewById(R.id.icon);
         }
     }
@@ -58,7 +60,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @Override
     public MessageAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         // create a new view
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.inbox_list_item, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.message_list_item, viewGroup, false);
         // set the view's size, margins, paddings and layout parameters
 
         ViewHolder vh = new ViewHolder((RelativeLayout) v);
@@ -72,6 +74,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         // - replace the contents of the view with that element
         viewHolder.mSecondLine.setText(mDataSet.get(i).getBody());
         viewHolder.mFirstLine.setText(mDataSet.get(i).getSubject());
+        viewHolder.mDate.setText(mDataSet.get(i).getDatePosted());
     }
 
     @Override

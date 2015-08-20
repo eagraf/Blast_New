@@ -68,7 +68,7 @@ public class GroupFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // TODO Auto-generated method stub
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_group, menu);
+        inflater.inflate(R.menu.menu_group_view, menu);
     }
 
     @Override

@@ -72,15 +72,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }).start();
 */
 
-        //Initialize some navigation drawer stuff.
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_layout);
-        mDrawerView = (NavigationView) findViewById(R.id.navigation_view);
-        mDrawerView.setNavigationItemSelectedListener(this);
-
-        //Set the navigation drawer information.
-        ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.name)).setText("Name");
-        ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.email)).setText("Email");
-
         //Initialize the fragment manager.
         fragmentManager = getFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
@@ -94,13 +85,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Start in the inbox fragment.
         fragmentTransaction.add(R.id.main_content_frame, blastFragment);
         fragmentTransaction.commit();
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        //Initialize some navigation drawer stuff.
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_layout);
+        mDrawerView = (NavigationView) findViewById(R.id.navigation_view);
+        mDrawerView.setNavigationItemSelectedListener(this);
+
+        //Set the navigation drawer information.
+        ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.name)).setText("Name");
+        ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.email)).setText("Email");
+
+
     }
 
     @Override
@@ -122,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //Handle click events on navigation drawer items.
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         menuItem.setChecked(true);
+        mDrawerLayout.closeDrawers();
         fragmentTransaction = getFragmentManager().beginTransaction();
         switch (menuItem.getItemId()) {
             case R.id.navigation_inbox_item:
@@ -152,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             default:
                 return true;
         }
-        mDrawerLayout.closeDrawers();
+
         return true;
     }
 

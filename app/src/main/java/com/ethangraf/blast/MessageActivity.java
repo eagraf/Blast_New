@@ -7,14 +7,18 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.support.v7.widget.PopupMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -29,12 +33,14 @@ import java.util.TimeZone;
 /**
  * Created by Ethan on 8/8/2015.
  */
-public class MessageActivity extends AppCompatActivity {
+public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
     private RecyclerView mMessageView;
     private RecyclerView.LayoutManager mMessageLayoutManager;
     private MessageAdapter mMessageAdapter;
 
     private Group group;
+
+    private ImageButton overflow;
 
     private static final String planets[] = new String[] {"Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"};
 
@@ -64,7 +70,7 @@ public class MessageActivity extends AppCompatActivity {
         new AsyncTask<Void,Void,Void>(){
             @Override
             protected Void doInBackground(Void... params) {
-                DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+                //DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
                 MessageActivity.this.group = MainActivity.mapper.load(Group.class, uid);
                 return null;
             }
@@ -96,6 +102,10 @@ public class MessageActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         switch(id) {
+            case R.id.options:
+                System.out.println("GEGE");
+                showPopup(findViewById(R.id.options));
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -104,9 +114,9 @@ public class MessageActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_subscribe, menu);
-        final MenuItem switchItem = menu.findItem(R.id.subscribe_switch_item);
+      //  final MenuItem switchItem = menu.findItem(R.id.subscribe_switch_item);
         final MenuItem textItem = menu.findItem(R.id.subscribe_text_item);
-
+        /*
         //Create behaviour for the subscription switch.
         Switch subscribeSwitch = (Switch) switchItem.getActionView().findViewById(R.id.subscription_switch);
         subscribeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -121,8 +131,8 @@ public class MessageActivity extends AppCompatActivity {
                     Toast.makeText(MessageActivity.this, "Unsubscribed from group.", Toast.LENGTH_LONG).show();
                 }
             }
-        });
-        return true;
+        });*/
+        return super.onCreateOptionsMenu(menu);
     }
 
     public void postMessage(View view) {
@@ -151,6 +161,37 @@ public class MessageActivity extends AppCompatActivity {
         //Close the keyboard.
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    //Show the overflow menu options
+    public void showPopup(View view) {
+        PopupMenu popup = new PopupMenu(this, view);
+        MenuInflater inflater = popup.getMenuInflater();
+        popup.setOnMenuItemClickListener(this);
+        inflater.inflate(R.menu.menu_group, popup.getMenu());
+        popup.show();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_group_people:
+                return true;
+            case R.id.menu_group_archive:
+                return true;
+            case R.id.menu_group_delete:
+                new AsyncTask<Void,Void,Void>(){
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        MainActivity.mapper.delete(group);
+                        return null;
+                    }
+                }.execute();
+                finish();
+                return true;
+            default:
+                return false;
+        }
     }
 }
 
