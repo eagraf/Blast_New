@@ -137,6 +137,24 @@ public class GoogleOAuthActivity extends Activity implements
 
                     AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(credentialsProvider);
                     MainActivity.mapper = new DynamoDBMapper(ddbClient);
+
+                    new AsyncTask<Void,Void,Void>(){
+                        @Override
+                        protected Void doInBackground(Void... params) {
+                            //DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+                            User user = MainActivity.mapper.load(User.class, Plus.AccountApi.getAccountName(mGoogleApiClient));
+                            if(user == null) {
+                                user = new User();
+                                user.setIdentityID(Plus.AccountApi.getAccountName(mGoogleApiClient));
+                                user.setName(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient).getDisplayName());
+                                new MainActivity.Save().execute(user);
+                            }
+                            MainActivity.user = user;
+                            System.out.println(Plus.AccountApi.getAccountName(mGoogleApiClient));
+                            return null;
+                        }
+                    }.execute();
+
                     return true;
                 }
                 return false;

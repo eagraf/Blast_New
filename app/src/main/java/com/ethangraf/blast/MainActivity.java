@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public static DynamoDBMapper mapper;
 
+    public static User user;
+
     public final static String MESSAGE_VIEW_GROUP_UID = "com.ethangraf.blast.MESSAGE_VIEW_GROUP_NAME";
 
     @Override
@@ -70,8 +72,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mapper = new DynamoDBMapper(ddbClient);
             }
         }).start();
-*/
 
+
+*/
         //Initialize the fragment manager.
         fragmentManager = getFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
@@ -92,8 +95,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDrawerView.setNavigationItemSelectedListener(this);
 
         //Set the navigation drawer information.
-        ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.name)).setText("Name");
-        ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.email)).setText("Email");
+        ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.name)).setText(user.getName());
+        ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.email)).setText(user.getIdentityID());
 
 
     }
@@ -195,5 +198,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent(this, MessageActivity.class);
         intent.putExtra(this.MESSAGE_VIEW_GROUP_UID, ((TextView) view.findViewById(R.id.secondLine)).getText().toString());
         startActivity(intent);
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
