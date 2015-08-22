@@ -16,10 +16,12 @@ import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.ethangraf.blast.GCM.RegistrationIntentService;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
@@ -31,6 +33,8 @@ import java.util.Map;
 public class GoogleOAuthActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
+
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     private static final String TAG = GoogleOAuthActivity.class.getSimpleName();
     private static final int RC_GOOGLE_LOGIN = 1;
@@ -73,6 +77,14 @@ public class GoogleOAuthActivity extends Activity implements
                 mGoogleApiClient.connect();
             }
         }
+        if (checkPlayServices()) {
+            Log.i(TAG,"Has services");
+            // Start IntentService to register this application with GCM.
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
+
+
     }
 
     /* A helper method to resolve the current ConnectionResult error. */
@@ -138,23 +150,16 @@ public class GoogleOAuthActivity extends Activity implements
                     AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(credentialsProvider);
                     MainActivity.mapper = new DynamoDBMapper(ddbClient);
 
-                    new AsyncTask<Void,Void,Void>(){
-                        @Override
-                        protected Void doInBackground(Void... params) {
-                            //DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
-                            User user = MainActivity.mapper.load(User.class, Plus.AccountApi.getAccountName(mGoogleApiClient));
-                            if(user == null) {
-                                user = new User();
-                                user.setIdentityID(Plus.AccountApi.getAccountName(mGoogleApiClient));
-                                user.setName(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient).getDisplayName());
-                                new MainActivity.Save().execute(user);
-                            }
-                            MainActivity.user = user;
-                            System.out.println(Plus.AccountApi.getAccountName(mGoogleApiClient));
-                            return null;
-                        }
-                    }.execute();
-
+                    //DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+                    User user = MainActivity.mapper.load(User.class, Plus.AccountApi.getAccountName(mGoogleApiClient));
+                    if(user == null) {
+                        user = new User();
+                        user.setIdentityID(Plus.AccountApi.getAccountName(mGoogleApiClient));
+                        user.setName(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient).getDisplayName());
+                        new MainActivity.Save().execute(user);
+                    }
+                    MainActivity.user = user;
+                    System.out.println(Plus.AccountApi.getAccountName(mGoogleApiClient));
                     return true;
                 }
                 return false;
@@ -223,4 +228,25 @@ public class GoogleOAuthActivity extends Activity implements
             mGoogleApiClient.connect();
         }
     }
+
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
 }
