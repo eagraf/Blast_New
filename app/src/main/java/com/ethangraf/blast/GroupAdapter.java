@@ -48,11 +48,14 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         public TextView mFirstLine;
         public TextView mSecondLine;
         public ImageView mProfileImage;
+        public TextView mGroupId;
+
         public ViewHolder(RelativeLayout v) {
             super(v);
             mFirstLine = (TextView) v.findViewById(R.id.firstLine);
             mSecondLine = (TextView) v.findViewById(R.id.secondLine);
             mProfileImage = (ImageView) v.findViewById(R.id.icon);
+            mGroupId = (TextView) v.findViewById(R.id.groupId);
         }
     }
 
@@ -74,7 +77,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         // - replace the contents of the view with that element
 
         viewHolder.mFirstLine.setText(mDataSet.get(i).getDisplayName());
-        viewHolder.mSecondLine.setText(mDataSet.get(i).getGroupID());
+        viewHolder.mSecondLine.setText(mDataSet.get(i).getOwnerName());
+        viewHolder.mGroupId.setText(mDataSet.get(i).getGroupID());
     }
 
     @Override

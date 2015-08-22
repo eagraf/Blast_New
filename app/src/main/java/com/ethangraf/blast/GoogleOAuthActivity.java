@@ -139,26 +139,19 @@ public class GoogleOAuthActivity extends Activity implements
                     AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(credentialsProvider);
                     MainActivity.mapper = new DynamoDBMapper(ddbClient);
 
-                    new AsyncTask<Void,Void,Void>(){
-                        @Override
-                        protected Void doInBackground(Void... params) {
-                            //DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
-                            User user = MainActivity.mapper.load(User.class, Plus.AccountApi.getAccountName(mGoogleApiClient));
-                            if(user == null) {
-                                user = new User();
-                                user.setIdentityID(Plus.AccountApi.getAccountName(mGoogleApiClient));
-                                user.setName(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient).getDisplayName());
-                                new MainActivity.Save().execute(user);
-                            }
-                            if(user.getSubscriptions() == null) {
-                                user.setSubscriptions(new ArrayList<String>());
-                                new MainActivity.Save().execute(user);
-                            }
-                            MainActivity.user = user;
-                            System.out.println(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient).getDisplayName());
-                            return null;
-                        }
-                    }.execute();
+                    User user = MainActivity.mapper.load(User.class, Plus.AccountApi.getAccountName(mGoogleApiClient));
+                    if(user == null) {
+                        user = new User();
+                        user.setIdentityID(Plus.AccountApi.getAccountName(mGoogleApiClient));
+                        user.setName(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient).getDisplayName());
+                        new MainActivity.Save().execute(user);
+                    }
+                    if(user.getSubscriptions() == null) {
+                        user.setSubscriptions(new ArrayList<String>());
+                        new MainActivity.Save().execute(user);
+                    }
+                    MainActivity.user = user;
+                    System.out.println(user.getName());
 
                     return true;
                 }

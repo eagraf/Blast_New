@@ -70,6 +70,11 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
         Bundle b = getIntent().getExtras();
         group = (Group) b.getParcelable(MainActivity.MESSAGE_VIEW_GROUP);
 
+        //Show post view if editor or owner
+        if(group.getOwner().equals(MainActivity.user.getIdentityID()) || group.getEditors().contains(MainActivity.user.getIdentityID())) {
+            findViewById(R.id.post_view).setVisibility(View.VISIBLE);
+        }
+
         getSupportActionBar().setTitle(group.getDisplayName());
 
         mMessageView = (RecyclerView) findViewById(R.id.message_list_view);
@@ -188,6 +193,9 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
                 new AsyncTask<Void,Void,Void>(){
                     @Override
                     protected Void doInBackground(Void... params) {
+                        for(int i = 0; i < group.getSubscribers().size(); i++) {
+                            MainActivity.mapper.load(User.class, group.getSubscribers().get(i)).getSubscriptions().remove(group.getGroupID());
+                        }
                         MainActivity.mapper.delete(group);
                         return null;
                     }

@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,11 +47,14 @@ public class SubscriptionAdapter extends RecyclerView.Adapter<SubscriptionAdapte
         public TextView mFirstLine;
         public TextView mSecondLine;
         public ImageView mProfileImage;
+        public TextView mGroupId;
+
         public ViewHolder(RelativeLayout v) {
             super(v);
             mFirstLine = (TextView) v.findViewById(R.id.firstLine);
             mSecondLine = (TextView) v.findViewById(R.id.secondLine);
             mProfileImage = (ImageView) v.findViewById(R.id.icon);
+            mGroupId = (TextView) v.findViewById(R.id.groupId);
         }
     }
 
@@ -69,8 +74,9 @@ public class SubscriptionAdapter extends RecyclerView.Adapter<SubscriptionAdapte
     public void onBindViewHolder(SubscriptionAdapter.ViewHolder viewHolder, int i) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        viewHolder.mSecondLine.setText(mDataSet.get(i).getGroupID());
+        viewHolder.mSecondLine.setText(mDataSet.get(i).getOwnerName());
         viewHolder.mFirstLine.setText(mDataSet.get(i).getDisplayName());
+        viewHolder.mGroupId.setText(mDataSet.get(i).getGroupID());
     }
 
     @Override

@@ -17,8 +17,13 @@ import java.util.List;
 
 @DynamoDBTable(tableName = "Groups")
 public class Group implements Parcelable {
-    private String groupID, displayName;
-    private List<String> subscribers;
+    private String groupID;
+    private String displayName;
+    private String owner;
+    private String ownerName;
+
+    private List<String> subscribers = new ArrayList<>();
+    private List<String> editors = new ArrayList<>();
 
     public Group() {}
 
@@ -49,6 +54,33 @@ public class Group implements Parcelable {
         this.subscribers = subscribers;
     }
 
+    @DynamoDBAttribute(attributeName = "Owner")
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    @DynamoDBIndexHashKey(attributeName = "OwnerName")
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    @DynamoDBAttribute(attributeName = "Editors")
+    public List<String> getEditors() {
+        return editors;
+    }
+
+    public void setEditors(List<String> editors) {
+        this.editors = editors;
+    }
+
     public void addSubscriber(String subscriber) {
         this.subscribers.add(subscriber);
         new MainActivity.Save().execute(this);
@@ -56,6 +88,16 @@ public class Group implements Parcelable {
 
     public void removeSubscriber(String subscriber) {
         this.subscribers.remove(subscriber);
+        new MainActivity.Save().execute(this);
+    }
+
+    public void addEditor(String editor) {
+        this.editors.add(editor);
+        new MainActivity.Save().execute(this);
+    }
+
+    public void removeEditor(String editor) {
+        this.editors.remove(editor);
         new MainActivity.Save().execute(this);
     }
 
@@ -70,7 +112,11 @@ public class Group implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(groupID);
         out.writeString(displayName);
+        out.writeString(owner);
+        out.writeString(ownerName);
+
         out.writeList(subscribers);
+        out.writeList(editors);
     }
 
     // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
@@ -88,8 +134,12 @@ public class Group implements Parcelable {
     private Group(Parcel in) {
         groupID = in.readString();
         displayName = in.readString();
+        owner = in.readString();
+        ownerName = in.readString();
 
         subscribers = new ArrayList<>();
+        editors = new ArrayList<>();
         in.readList(subscribers, null);
+        in.readList(editors, null);
     }
 }

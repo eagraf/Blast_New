@@ -24,7 +24,8 @@
         android:layout_height="98dp"
         android:layout_gravity="bottom"
         android:gravity="bottom"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:visibility="gone">
 
         <!--The main floating action button-->
         <android.support.design.widget.FloatingActionButton

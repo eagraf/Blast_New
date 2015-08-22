@@ -173,7 +173,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         group.setGroupID(UUID.randomUUID().toString());
         group.setDisplayName(groupName);
-        group.setSubscribers(new ArrayList<String>());
+        group.setOwner(user.getIdentityID());
+        group.setOwnerName(user.getName());
+
+        group.addSubscriber(user.getIdentityID());
+        user.addSubscription(group.getGroupID());
 
         new Save().execute(group);
     }
@@ -201,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             protected Group doInBackground(View... params) {
                 //Get the group to be loaded into the new activity.
-                Group group = mapper.load(Group.class, ((TextView) params[0].findViewById(R.id.secondLine)).getText().toString());
+                Group group = mapper.load(Group.class, ((TextView) params[0].findViewById(R.id.groupId)).getText().toString());
                 return group;
             }
 

@@ -62,7 +62,7 @@ public class SubscriptionActivity extends AppCompatActivity {
             @Override
             protected Group doInBackground(View... params) {
                 //Get the group to be loaded into the new activity.
-                Group group = MainActivity.mapper.load(Group.class, ((TextView) params[0].findViewById(R.id.secondLine)).getText().toString());
+                Group group = MainActivity.mapper.load(Group.class, ((TextView) params[0].findViewById(R.id.groupId)).getText().toString());
 
                 return group;
             }
