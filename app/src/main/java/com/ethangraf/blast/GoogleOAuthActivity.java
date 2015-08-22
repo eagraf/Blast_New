@@ -25,6 +25,7 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -149,8 +150,12 @@ public class GoogleOAuthActivity extends Activity implements
                                 user.setName(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient).getDisplayName());
                                 new MainActivity.Save().execute(user);
                             }
+                            if(user.getSubscriptions() == null) {
+                                user.setSubscriptions(new ArrayList<String>());
+                                new MainActivity.Save().execute(user);
+                            }
                             MainActivity.user = user;
-                            System.out.println(Plus.AccountApi.getAccountName(mGoogleApiClient));
+                            System.out.println(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient).getDisplayName());
                             return null;
                         }
                     }.execute();

@@ -12,10 +12,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public static User user;
 
-    public final static String MESSAGE_VIEW_GROUP_UID = "com.ethangraf.blast.MESSAGE_VIEW_GROUP_NAME";
+    public final static String MESSAGE_VIEW_GROUP = "com.ethangraf.blast.GROUP";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +99,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Set the navigation drawer information.
         ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.name)).setText(user.getName());
         ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.email)).setText(user.getIdentityID());
-
-
     }
 
     @Override
@@ -173,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         group.setGroupID(UUID.randomUUID().toString());
         group.setDisplayName(groupName);
+        group.setSubscribers(new ArrayList<String>());
 
         new Save().execute(group);
     }
@@ -195,9 +196,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void openMessageActivity(View view) {
-        Intent intent = new Intent(this, MessageActivity.class);
-        intent.putExtra(this.MESSAGE_VIEW_GROUP_UID, ((TextView) view.findViewById(R.id.secondLine)).getText().toString());
-        startActivity(intent);
+        new AsyncTask<View,Void,Group>(){
+
+            @Override
+            protected Group doInBackground(View... params) {
+                //Get the group to be loaded into the new activity.
+                Group group = mapper.load(Group.class, ((TextView) params[0].findViewById(R.id.secondLine)).getText().toString());
+                return group;
+            }
+
+            @Override
+            protected void onPostExecute(Group group) {
+                // Pass the parcelable group into the new activity.
+                Intent intent = new Intent(MainActivity.this, MessageActivity.class);
+                intent.putExtra(MESSAGE_VIEW_GROUP, group);
+                startActivity(intent);
+            }
+        }.execute(view);
     }
 
     public void setUser(User user) {

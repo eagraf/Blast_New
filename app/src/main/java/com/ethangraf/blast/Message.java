@@ -16,7 +16,6 @@ public class Message {
     String subject;
     String body;
 
-
     @DynamoDBAttribute(attributeName = "Body")
     public String getBody() {
         return body;
@@ -26,7 +25,6 @@ public class Message {
         this.body = body;
     }
 
-
     @DynamoDBAttribute(attributeName = "Subject")
     public String getSubject() {
         return subject;
@@ -35,8 +33,6 @@ public class Message {
     public void setSubject(String subject) {
         this.subject = subject;
     }
-
-
 
     @DynamoDBHashKey(attributeName = "Group ID")
     public String getGroupID() {

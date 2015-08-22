@@ -19,6 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -37,6 +38,8 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
     private RecyclerView mMessageView;
     private RecyclerView.LayoutManager mMessageLayoutManager;
     private MessageAdapter mMessageAdapter;
+
+    private  ProgressBar spinner;
 
     private Group group;
 
@@ -64,22 +67,10 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
         });
 
         // Get the title from the intent and set it as the title for the activity.
-        Intent intent = getIntent();
-        final String uid = intent.getStringExtra(MainActivity.MESSAGE_VIEW_GROUP_UID);
+        Bundle b = getIntent().getExtras();
+        group = (Group) b.getParcelable(MainActivity.MESSAGE_VIEW_GROUP);
 
-        new AsyncTask<Void,Void,Void>(){
-            @Override
-            protected Void doInBackground(Void... params) {
-                //DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
-                MessageActivity.this.group = MainActivity.mapper.load(Group.class, uid);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                MessageActivity.this.getSupportActionBar().setTitle(group.getDisplayName());
-            }
-        }.execute();
+        getSupportActionBar().setTitle(group.getDisplayName());
 
         mMessageView = (RecyclerView) findViewById(R.id.message_list_view);
 
@@ -87,7 +78,7 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
         mMessageView.setLayoutManager(mMessageLayoutManager);
 
         // specify an adapter (see also next example)
-        mMessageAdapter = new MessageAdapter(uid);
+        mMessageAdapter = new MessageAdapter(group.getGroupID());
         mMessageView.setAdapter(mMessageAdapter);
 
         // use this setting to improve performance if you know that changes
@@ -114,24 +105,38 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_subscribe, menu);
-      //  final MenuItem switchItem = menu.findItem(R.id.subscribe_switch_item);
+        final MenuItem switchItem = menu.findItem(R.id.subscribe_switch_item);
         final MenuItem textItem = menu.findItem(R.id.subscribe_text_item);
-        /*
-        //Create behaviour for the subscription switch.
+
+        //Set switch to on if already subscribed
         Switch subscribeSwitch = (Switch) switchItem.getActionView().findViewById(R.id.subscription_switch);
+        if(MainActivity.user.getSubscriptions().contains(group.getGroupID())) {
+            subscribeSwitch.setChecked(true);
+            textItem.setTitle("Subscribed");
+        }
+
         subscribeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            //Create behaviour for the subscription switch.
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
+                if (!isChecked) {
                     // The toggle is enabled.
-                    textItem.setTitle("Subscribed");
-                    Toast.makeText(MessageActivity.this, "Subscribed to group.", Toast.LENGTH_LONG).show();
-                } else {
-                    // The toggle is disabled
+                    // Remove the subscription from database
+                    group.removeSubscriber(MainActivity.user.getIdentityID());
+                    MainActivity.user.removeSubscription(group.getGroupID());
+
                     textItem.setTitle("Subscribe");
                     Toast.makeText(MessageActivity.this, "Unsubscribed from group.", Toast.LENGTH_LONG).show();
+                } else {
+                    // The toggle is disabled
+                    // Add the subscription from database
+                    group.addSubscriber(MainActivity.user.getIdentityID());
+                    MainActivity.user.addSubscription(group.getGroupID());
+
+                    textItem.setTitle("Subscribed");
+                    Toast.makeText(MessageActivity.this, "Subscribed to group.", Toast.LENGTH_LONG).show();
                 }
             }
-        });*/
+        });
         return super.onCreateOptionsMenu(menu);
     }
 

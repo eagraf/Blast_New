@@ -1,6 +1,7 @@
 package com.ethangraf.blast;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -56,8 +57,25 @@ public class SubscriptionActivity extends AppCompatActivity {
     }
 
     public void openMessageActivity(View view) {
-        Intent intent = new Intent(this, MessageActivity.class);
-        intent.putExtra(MainActivity.MESSAGE_VIEW_GROUP_UID, ((TextView) view.findViewById(R.id.secondLine)).getText().toString());
-        startActivity(intent);
+        new AsyncTask<View,Void,Group>(){
+
+            @Override
+            protected Group doInBackground(View... params) {
+                //Get the group to be loaded into the new activity.
+                Group group = MainActivity.mapper.load(Group.class, ((TextView) params[0].findViewById(R.id.secondLine)).getText().toString());
+
+                return group;
+            }
+
+            @Override
+            protected void onPostExecute(Group group) {
+                // Pass the parcelable group into the new activity.
+                System.out.println(group.getDisplayName());
+
+                Intent intent = new Intent(SubscriptionActivity.this, MessageActivity.class);
+                intent.putExtra(MainActivity.MESSAGE_VIEW_GROUP, group);
+                startActivity(intent);
+            }
+        }.execute(view);
     }
 }

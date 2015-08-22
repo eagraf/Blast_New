@@ -1,5 +1,6 @@
 package com.ethangraf.blast;
 
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,10 +17,27 @@ import java.util.List;
  */
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> {
 
-    private List<String> mDataSet;
+    private List<Group> mDataSet;
+    private List<String> subscriptions;
 
-    public GroupAdapter(List<String> data) {
-        this.mDataSet = data;
+    public GroupAdapter() {
+        mDataSet = new ArrayList<>();
+        subscriptions = MainActivity.user.getSubscriptions();
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                //DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+                for (int i = 0; i < subscriptions.size(); i++) {
+                    mDataSet.add(MainActivity.mapper.load(Group.class, subscriptions.get(i)));
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                notifyDataSetChanged();
+            }
+        }.execute();
     }
 
     // Provide a reference to the views for each data item
@@ -41,7 +60,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
     @Override
     public GroupAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         // create a new view
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.inbox_list_item, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.group_list_item, viewGroup, false);
         // set the view's size, margins, paddings and layout parameters
 
         ViewHolder vh = new ViewHolder((RelativeLayout) v);
@@ -53,8 +72,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
     public void onBindViewHolder(GroupAdapter.ViewHolder viewHolder, int i) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        viewHolder.mSecondLine.setText(mDataSet.get(i));
-        viewHolder.mFirstLine.setText(mDataSet.get(i));
+
+        viewHolder.mFirstLine.setText(mDataSet.get(i).getDisplayName());
+        viewHolder.mSecondLine.setText(mDataSet.get(i).getGroupID());
     }
 
     @Override
