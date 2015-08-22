@@ -1,4 +1,4 @@
-package com.ethangraf.blast.GCM;
+package com.ethangraf.blast.gcmservices;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
