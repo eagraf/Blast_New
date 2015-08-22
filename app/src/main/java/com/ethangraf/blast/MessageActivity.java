@@ -23,12 +23,14 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 /**
@@ -99,7 +101,6 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
         int id = item.getItemId();
         switch(id) {
             case R.id.options:
-                System.out.println("GEGE");
                 showPopup(findViewById(R.id.options));
                 return true;
         }
@@ -196,6 +197,13 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
                         for(int i = 0; i < group.getSubscribers().size(); i++) {
                             MainActivity.mapper.load(User.class, group.getSubscribers().get(i)).getSubscriptions().remove(group.getGroupID());
                         }
+
+                        Message model = new Message();
+                        model.setGroupID(group.getGroupID());
+                        DynamoDBQueryExpression queryExpression = new DynamoDBQueryExpression().withHashKeyValues(model);
+                        List<Message> messages = MainActivity.mapper.query(Message.class, queryExpression);
+                        MainActivity.mapper.batchDelete(messages);
+
                         MainActivity.mapper.delete(group);
                         return null;
                     }
