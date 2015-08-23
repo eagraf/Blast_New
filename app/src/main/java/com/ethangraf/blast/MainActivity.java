@@ -9,12 +9,12 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.ethangraf.blast.gcmservices.RegistrationIntentService;
 
 import java.util.UUID;
 
@@ -99,6 +99,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.email)).setText(user.getIdentityID());
 
 
+        // Start IntentService to register this application with GCM.
+        Intent intent = new Intent(this, RegistrationIntentService.class);
+        startService(intent);
     }
 
     @Override

@@ -16,7 +16,6 @@ import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-import com.ethangraf.blast.gcmservices.RegistrationIntentService;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -52,10 +51,12 @@ public class GoogleOAuthActivity extends Activity implements
     /* Store the connection result from onConnectionFailed callbacks so that we can resolve them when the user clicks
      * sign-in. */
     private ConnectionResult mGoogleConnectionResult;
+    public static CognitoCachingCredentialsProvider credentialsProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkPlayServices();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -77,14 +78,6 @@ public class GoogleOAuthActivity extends Activity implements
                 mGoogleApiClient.connect();
             }
         }
-        if (checkPlayServices()) {
-            Log.i(TAG,"Has services");
-            // Start IntentService to register this application with GCM.
-            Intent intent = new Intent(this, RegistrationIntentService.class);
-            startService(intent);
-        }
-
-
     }
 
     /* A helper method to resolve the current ConnectionResult error. */
@@ -134,7 +127,7 @@ public class GoogleOAuthActivity extends Activity implements
                 }
 
                 if(token!=null) {
-                    final CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
+                    credentialsProvider = new CognitoCachingCredentialsProvider(
                             getApplicationContext(),
                             "us-east-1:f08cf8f2-5a11-4756-a62a-97d65306a831", // Identity Pool ID
                             Regions.US_EAST_1 // Region
