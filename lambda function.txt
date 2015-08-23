@@ -10,7 +10,7 @@ exports.handler = function(event, context) {
     
     var message = JSON.stringify({
     "default":"hey",
-    "GCM": util.format('{"data":{"message":"%s"}}', 'Foo bar!')
+    "GCM": util.format('{"data":{"message":"%s"}}', event.Records[0].dynamodb.NewImage.Subject.S)
     });
     var params = {
         Message: message, /* required */
