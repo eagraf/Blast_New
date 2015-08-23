@@ -44,5 +44,8 @@
 
     <string name="group_name">Group Name</string>
     <string name="notifications">Notifications</string>
+
+    <!--GCM-->
+    <string name="PROJECT_ID">732247720107</string>
     <string name="scope">Public</string>
 </resources>

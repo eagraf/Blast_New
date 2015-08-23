@@ -12,7 +12,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 public class Message {
 
     String groupID;
-    String datePosted;
+    long datePosted;
     String subject;
     String body;
 
@@ -44,11 +44,11 @@ public class Message {
     }
 
     @DynamoDBRangeKey(attributeName = "DatePosted")
-    public String getDatePosted() {
+    public long getDatePosted() {
         return datePosted;
     }
 
-    public void setDatePosted(String datePosted) {
+    public void setDatePosted(long datePosted) {
         this.datePosted = datePosted;
     }
 

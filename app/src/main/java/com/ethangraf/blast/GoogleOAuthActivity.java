@@ -20,6 +20,7 @@ import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
@@ -32,6 +33,8 @@ import java.util.Map;
 public class GoogleOAuthActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
+
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     private static final String TAG = GoogleOAuthActivity.class.getSimpleName();
     private static final int RC_GOOGLE_LOGIN = 1;
@@ -49,10 +52,12 @@ public class GoogleOAuthActivity extends Activity implements
     /* Store the connection result from onConnectionFailed callbacks so that we can resolve them when the user clicks
      * sign-in. */
     private ConnectionResult mGoogleConnectionResult;
+    public static CognitoCachingCredentialsProvider credentialsProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkPlayServices();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -123,7 +128,7 @@ public class GoogleOAuthActivity extends Activity implements
                 }
 
                 if(token!=null) {
-                    final CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
+                    credentialsProvider = new CognitoCachingCredentialsProvider(
                             getApplicationContext(),
                             "us-east-1:f08cf8f2-5a11-4756-a62a-97d65306a831", // Identity Pool ID
                             Regions.US_EAST_1 // Region
@@ -221,4 +226,25 @@ public class GoogleOAuthActivity extends Activity implements
             mGoogleApiClient.connect();
         }
     }
+
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
 }
