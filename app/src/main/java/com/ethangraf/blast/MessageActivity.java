@@ -194,10 +194,12 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
                 new AsyncTask<Void,Void,Void>(){
                     @Override
                     protected Void doInBackground(Void... params) {
+                        //Delete subscription from each user
                         for(int i = 0; i < group.getSubscribers().size(); i++) {
                             MainActivity.mapper.load(User.class, group.getSubscribers().get(i)).getSubscriptions().remove(group.getGroupID());
                         }
 
+                        //Delete messages
                         Message model = new Message();
                         model.setGroupID(group.getGroupID());
                         DynamoDBQueryExpression queryExpression = new DynamoDBQueryExpression().withHashKeyValues(model);

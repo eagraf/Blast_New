@@ -41,4 +41,8 @@
     <string name="menu_people">People &amp; Options</string>
     <string name="menu_archive">Archive</string>
     <string name="menu_delete">Delete</string>
+
+    <string name="group_name">Group Name</string>
+    <string name="notifications">Notifications</string>
+    <string name="scope">Public</string>
 </resources>
