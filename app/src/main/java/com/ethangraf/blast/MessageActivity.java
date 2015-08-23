@@ -1,7 +1,6 @@
 package com.ethangraf.blast;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -15,8 +14,16 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
+import android.widget.Switch;
+import android.widget.Toast;
+
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
+
+import java.util.List;
 
 /**
  * Created by Ethan on 8/8/2015.
@@ -26,7 +33,7 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
     private RecyclerView.LayoutManager mMessageLayoutManager;
     private MessageAdapter mMessageAdapter;
 
-    public String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
+    private  ProgressBar spinner;
 
     private Group group;
 
@@ -54,22 +61,15 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
         });
 
         // Get the title from the intent and set it as the title for the activity.
-        Intent intent = getIntent();
-        final String uid = intent.getStringExtra(MainActivity.MESSAGE_VIEW_GROUP_UID);
+        Bundle b = getIntent().getExtras();
+        group = (Group) b.getParcelable(MainActivity.MESSAGE_VIEW_GROUP);
 
-        new AsyncTask<Void,Void,Void>(){
-            @Override
-            protected Void doInBackground(Void... params) {
-                //DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
-                MessageActivity.this.group = MainActivity.mapper.load(Group.class, uid);
-                return null;
-            }
+        //Show post view if editor or owner
+        if(group.getOwner().equals(MainActivity.user.getIdentityID()) || group.getEditors().contains(MainActivity.user.getIdentityID())) {
+            findViewById(R.id.post_view).setVisibility(View.VISIBLE);
+        }
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                MessageActivity.this.getSupportActionBar().setTitle(group.getDisplayName());
-            }
-        }.execute();
+        getSupportActionBar().setTitle(group.getDisplayName());
 
         mMessageView = (RecyclerView) findViewById(R.id.message_list_view);
 
@@ -77,7 +77,7 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
         mMessageView.setLayoutManager(mMessageLayoutManager);
 
         // specify an adapter (see also next example)
-        mMessageAdapter = new MessageAdapter(uid, this);
+        mMessageAdapter = new MessageAdapter(group.getGroupID(),this);
         mMessageView.setAdapter(mMessageAdapter);
 
         // use this setting to improve performance if you know that changes
@@ -93,7 +93,6 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
         int id = item.getItemId();
         switch(id) {
             case R.id.options:
-                System.out.println("GEGE");
                 showPopup(findViewById(R.id.options));
                 return true;
         }
@@ -104,24 +103,38 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_subscribe, menu);
-      //  final MenuItem switchItem = menu.findItem(R.id.subscribe_switch_item);
+        final MenuItem switchItem = menu.findItem(R.id.subscribe_switch_item);
         final MenuItem textItem = menu.findItem(R.id.subscribe_text_item);
-        /*
-        //Create behaviour for the subscription switch.
+
+        //Set switch to on if already subscribed
         Switch subscribeSwitch = (Switch) switchItem.getActionView().findViewById(R.id.subscription_switch);
+        if(MainActivity.user.getSubscriptions().contains(group.getGroupID())) {
+            subscribeSwitch.setChecked(true);
+            textItem.setTitle("Subscribed");
+        }
+
         subscribeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            //Create behaviour for the subscription switch.
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
+                if (!isChecked) {
                     // The toggle is enabled.
-                    textItem.setTitle("Subscribed");
-                    Toast.makeText(MessageActivity.this, "Subscribed to group.", Toast.LENGTH_LONG).show();
-                } else {
-                    // The toggle is disabled
+                    // Remove the subscription from database
+                    group.removeSubscriber(MainActivity.user.getIdentityID());
+                    MainActivity.user.removeSubscription(group.getGroupID());
+
                     textItem.setTitle("Subscribe");
                     Toast.makeText(MessageActivity.this, "Unsubscribed from group.", Toast.LENGTH_LONG).show();
+                } else {
+                    // The toggle is disabled
+                    // Add the subscription from database
+                    group.addSubscriber(MainActivity.user.getIdentityID());
+                    MainActivity.user.addSubscription(group.getGroupID());
+
+                    textItem.setTitle("Subscribed");
+                    Toast.makeText(MessageActivity.this, "Subscribed to group.", Toast.LENGTH_LONG).show();
                 }
             }
-        });*/
+        });
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -170,6 +183,16 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
                 new AsyncTask<Void,Void,Void>(){
                     @Override
                     protected Void doInBackground(Void... params) {
+                        for(int i = 0; i < group.getSubscribers().size(); i++) {
+                            MainActivity.mapper.load(User.class, group.getSubscribers().get(i)).getSubscriptions().remove(group.getGroupID());
+                        }
+
+                        Message model = new Message();
+                        model.setGroupID(group.getGroupID());
+                        DynamoDBQueryExpression queryExpression = new DynamoDBQueryExpression().withHashKeyValues(model);
+                        List<Message> messages = MainActivity.mapper.query(Message.class, queryExpression);
+                        MainActivity.mapper.batchDelete(messages);
+
                         MainActivity.mapper.delete(group);
                         return null;
                     }
