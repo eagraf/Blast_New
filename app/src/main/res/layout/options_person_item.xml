@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:padding="6dip"
+    android:descendantFocusability="blocksDescendants"
+    android:onClick="openMessageActivity">
+
+    <ImageView
+        android:id="@+id/profile_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="6dip"
+        android:src="@mipmap/ic_launcher" />
+
+
+    <TextView
+        android:id="@+id/profile_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:textSize="16sp"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/profile_icon"
+        android:layout_toEndOf="@+id/profile_icon"
+        android:textColor="@color/Black"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkBox_editor"
+        android:checked="false"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Editor"
+        android:id="@+id/editor"
+        android:visibility="gone"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/checkBox_editor"
+        android:layout_toStartOf="@+id/checkBox_editor"
+        android:textColor="@color/Black"/>
+
+</RelativeLayout>

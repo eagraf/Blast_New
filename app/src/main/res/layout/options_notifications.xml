@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:padding="6dip"
+    android:descendantFocusability="blocksDescendants" >
+
+    <TextView
+        android:id="@+id/notifications"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:textSize="16sp"
+        android:text="@string/notifications"
+        android:textColor="@color/Black"
+        android:layout_centerVertical="true" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkBox_notifications"
+        android:layout_centerVertical="true"
+        android:layout_alignRight="@+id/notifications"
+        android:layout_alignEnd="@+id/notifications" />
+
+</RelativeLayout>

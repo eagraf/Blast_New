@@ -7,5 +7,9 @@ android:layout_height="wrap_content">
 <EditText
     android:id="@+id/group_name"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:textIsSelectable="false"
+    android:textColor="@color/abc_primary_text_material_light" />
 </LinearLayout>

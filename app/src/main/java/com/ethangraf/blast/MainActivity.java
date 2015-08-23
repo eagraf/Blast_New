@@ -11,18 +11,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.ethangraf.blast.gcmservices.RegistrationIntentService;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        NewGroupDialogFragment.NewGroupDialogListener {
+        NameDialogFragment.NameDialogListener {
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mDrawerView;
@@ -167,13 +165,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //Create a new group
     public void newGroup(View v) {
         // Create an instance of the new group dialog fragment and show it
-        NewGroupDialogFragment dialog = new NewGroupDialogFragment();
+        NameDialogFragment dialog = new NameDialogFragment();
         dialog.setTitle(getResources().getString(R.string.dialog_new_group));
+        dialog.setDefaultText(getResources().getString(R.string.dialog_new_group));
         dialog.show(getSupportFragmentManager(), "NewGroupDialogFragment");
     }
 
     @Override
-    public void onDialogPositiveClick(NewGroupDialogFragment dialog, String groupName) {
+    public void onDialogPositiveClick(NameDialogFragment dialog, String groupName) {
         Group group = new Group();
 
         group.setGroupID(UUID.randomUUID().toString());
@@ -184,12 +183,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         group.addSubscriber(user.getIdentityID());
         user.addSubscription(group.getGroupID());
 
+        group.addEditor(user.getIdentityID());
+
         new Save().execute(group);
     }
 
     @Override
     //Negative click on New Group Dialog
-    public void onDialogNegativeClick(NewGroupDialogFragment dialog) {
+    public void onDialogNegativeClick(NameDialogFragment dialog) {
         // User touched the dialog's negative button
         // Nothing happens
     }
