@@ -1,5 +1,6 @@
 package com.ethangraf.blast;
 
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,6 +49,8 @@ public class OptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public TextView name;
         public TextView editor;
         public CheckBox checkBox;
+        public User user;
+        int index;
 
         public ViewHolderPerson(RelativeLayout v) {
             super(v);
@@ -88,7 +92,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int i) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         switch(i) {
@@ -102,6 +106,17 @@ public class OptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             default:
                 //Set text to user name
                 ((ViewHolderPerson) viewHolder).name.setText(users.get(i - 3).getName());
+                ((ViewHolderPerson) viewHolder).index = i-3;
+
+                new AsyncTask<ViewHolderPerson, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(ViewHolderPerson... vh) {
+                        ((ViewHolderPerson) vh[0]).user = MainActivity.mapper.load(User.class, OptionsAdapter.this.users.get(vh[0].index).getIdentityID());
+                        return null;
+                    }
+
+                }.execute((ViewHolderPerson) viewHolder);
+
 
                 //If the user is the owner, they are able to see checkboxes to let people edit
                 if(group.getOwner().equals(MainActivity.user.getIdentityID())) {
@@ -117,10 +132,10 @@ public class OptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     @Override
                     public void onCheckedChanged(CompoundButton button, boolean checked) {
                         if (checked){
-                            group.addEditor(MainActivity.user.getIdentityID());
+                            group.addEditor(((ViewHolderPerson) viewHolder).user.getIdentityID());
                         }
                         else {
-                            group.removeEditor(MainActivity.user.getIdentityID());
+                            group.removeEditor(((ViewHolderPerson) viewHolder).user.getIdentityID());
                         }
                     }
                 });
