@@ -26,6 +26,7 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,7 +52,6 @@ public class GoogleOAuthActivity extends Activity implements
     /* Store the connection result from onConnectionFailed callbacks so that we can resolve them when the user clicks
      * sign-in. */
     private ConnectionResult mGoogleConnectionResult;
-    public static CognitoCachingCredentialsProvider credentialsProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +127,7 @@ public class GoogleOAuthActivity extends Activity implements
                 }
 
                 if(token!=null) {
-                    credentialsProvider = new CognitoCachingCredentialsProvider(
+                    final CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
                             getApplicationContext(),
                             "us-east-1:f08cf8f2-5a11-4756-a62a-97d65306a831", // Identity Pool ID
                             Regions.US_EAST_1 // Region
@@ -143,7 +143,6 @@ public class GoogleOAuthActivity extends Activity implements
                     AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(credentialsProvider);
                     MainActivity.mapper = new DynamoDBMapper(ddbClient);
 
-                    //DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
                     User user = MainActivity.mapper.load(User.class, Plus.AccountApi.getAccountName(mGoogleApiClient));
                     if(user == null) {
                         user = new User();
@@ -151,8 +150,13 @@ public class GoogleOAuthActivity extends Activity implements
                         user.setName(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient).getDisplayName());
                         new MainActivity.Save().execute(user);
                     }
+                    if(user.getSubscriptions() == null) {
+                        user.setSubscriptions(new ArrayList<String>());
+                        new MainActivity.Save().execute(user);
+                    }
                     MainActivity.user = user;
-                    System.out.println(Plus.AccountApi.getAccountName(mGoogleApiClient));
+                    System.out.println(user.getName());
+
                     return true;
                 }
                 return false;

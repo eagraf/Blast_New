@@ -23,7 +23,7 @@ import java.util.Arrays;
 public class GroupFragment extends Fragment {
 
     public RecyclerView mGroupView;
-    public InboxAdapter mGroupAdapter;
+    public GroupAdapter mGroupAdapter;
     public RecyclerView.LayoutManager mGroupLayoutManager;
 
     private static final String planets[] = new String[] {"Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"};
@@ -54,7 +54,7 @@ public class GroupFragment extends Fragment {
         mGroupLayoutManager = new LinearLayoutManager(getActivity());
         mGroupView.setLayoutManager(mGroupLayoutManager);
 
-        mGroupAdapter = new InboxAdapter(Arrays.asList(planets));
+        mGroupAdapter = new GroupAdapter();
         mGroupView.setAdapter(mGroupAdapter);
 
         // use this setting to improve performance if you know that changes
