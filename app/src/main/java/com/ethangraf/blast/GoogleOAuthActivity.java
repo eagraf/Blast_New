@@ -52,6 +52,7 @@ public class GoogleOAuthActivity extends Activity implements
     /* Store the connection result from onConnectionFailed callbacks so that we can resolve them when the user clicks
      * sign-in. */
     private ConnectionResult mGoogleConnectionResult;
+    public static CognitoCachingCredentialsProvider credentialsProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +128,7 @@ public class GoogleOAuthActivity extends Activity implements
                 }
 
                 if(token!=null) {
-                    final CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
+                    credentialsProvider = new CognitoCachingCredentialsProvider(
                             getApplicationContext(),
                             "us-east-1:f08cf8f2-5a11-4756-a62a-97d65306a831", // Identity Pool ID
                             Regions.US_EAST_1 // Region
