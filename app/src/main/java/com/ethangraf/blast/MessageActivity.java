@@ -12,23 +12,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.support.v7.widget.PopupMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Switch;
-import android.widget.Toast;
-
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * Created by Ethan on 8/8/2015.
@@ -37,6 +25,8 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
     private RecyclerView mMessageView;
     private RecyclerView.LayoutManager mMessageLayoutManager;
     private MessageAdapter mMessageAdapter;
+
+    public String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
 
     private Group group;
 
@@ -87,7 +77,7 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
         mMessageView.setLayoutManager(mMessageLayoutManager);
 
         // specify an adapter (see also next example)
-        mMessageAdapter = new MessageAdapter(uid);
+        mMessageAdapter = new MessageAdapter(uid, this);
         mMessageView.setAdapter(mMessageAdapter);
 
         // use this setting to improve performance if you know that changes
@@ -140,10 +130,7 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
         EditText body = (EditText) findViewById(R.id.body);
 
         //Get time and convert to string for DatePosted
-        Date now = Calendar.getInstance().getTime();
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        df.setTimeZone(TimeZone.getTimeZone("GMT"));
-        String datePosted = df.format(now);
+        Long datePosted = System.currentTimeMillis();
 
         //Post message to AWS here
         Message msg = new Message();

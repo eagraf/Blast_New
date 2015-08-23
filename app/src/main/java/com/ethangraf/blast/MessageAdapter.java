@@ -1,7 +1,9 @@
 package com.ethangraf.blast;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +21,11 @@ import java.util.List;
  */
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder>{
 
+    private final Context context;
     private List<Message> mDataSet = new ArrayList<>();
 
-    public MessageAdapter(final String uid) {
+    public MessageAdapter(final String uid, Context context) {
+        this.context = context;
         new AsyncTask<Void,Void,Void>(){
             @Override
             protected Void doInBackground(Void... params) {
@@ -74,7 +78,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         // - replace the contents of the view with that element
         viewHolder.mSecondLine.setText(mDataSet.get(i).getBody());
         viewHolder.mFirstLine.setText(mDataSet.get(i).getSubject());
-        viewHolder.mDate.setText(mDataSet.get(i).getDatePosted());
+
+
+        viewHolder.mDate.setText(DateUtils.formatDateTime(context, mDataSet.get(i).getDatePosted(),
+                DateUtils.FORMAT_SHOW_TIME|DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_ABBREV_MONTH));
     }
 
     @Override
