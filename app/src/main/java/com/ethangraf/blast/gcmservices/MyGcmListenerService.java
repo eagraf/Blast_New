@@ -11,8 +11,13 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.ethangraf.blast.GoogleOAuthActivity;
+import com.ethangraf.blast.Group;
+import com.ethangraf.blast.MainActivity;
 import com.ethangraf.blast.R;
 import com.google.android.gms.gcm.GcmListenerService;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by Da-Jin on 8/21/2015.
@@ -31,30 +36,31 @@ public class MyGcmListenerService extends GcmListenerService {
     // [START receive_message]
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        String message = data.getString("message");
-        Log.d(TAG, "From: " + from);
-        Log.d(TAG, "Message: " + message);
+        Log.d(TAG,data.toString());
 
-        if (from.startsWith("/topics/")) {
-            // message received from some topic.
-        } else {
-            // normal downstream message.
+        try {
+            JSONObject json = new JSONObject(data.getString("json"));
+            long dateposted = json.getJSONObject("DatePosted").getLong("N");
+            String subject = json.getJSONObject("Subject").getString("S");
+            String body = json.getJSONObject("Body").getString("S");
+            String groupid = json.getJSONObject("Group ID").getString("S");
+
+            Log.d(TAG, "From: " + from);
+            Log.d(TAG, "Message: " + subject);
+            Log.d(TAG, "Date Time: " + dateposted);
+
+            String groupName = MainActivity.mapper.load(Group.class,groupid).getDisplayName();
+
+            if (from.startsWith("/topics/")) {
+                // message received from some topic.
+            } else {
+                // normal downstream message.
+            }
+
+            sendNotification(groupName, subject);
+        }catch (JSONException e){
+            e.printStackTrace();
         }
-
-        // [START_EXCLUDE]
-        /**
-         * Production applications would usually process the message here.
-         * Eg: - Syncing with server.
-         *     - Store message in local database.
-         *     - Update UI.
-         */
-
-        /**
-         * In some cases it may be useful to show a notification indicating to the user
-         * that a message was received.
-         */
-        sendNotification(message);
-        // [END_EXCLUDE]
     }
     // [END receive_message]
 
@@ -63,7 +69,7 @@ public class MyGcmListenerService extends GcmListenerService {
      *
      * @param message GCM message received.
      */
-    private void sendNotification(String message) {
+    private void sendNotification(String title, String message) {
         Intent intent = new Intent(this, GoogleOAuthActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 1 /* Request code */, intent,
@@ -72,7 +78,7 @@ public class MyGcmListenerService extends GcmListenerService {
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_pause_dark)
-                .setContentTitle("GCM Message")
+                .setContentTitle(title)
                 .setContentText(message)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)

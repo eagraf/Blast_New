@@ -80,7 +80,8 @@ public class RegistrationIntentService extends IntentService {
      */
     private void sendRegistrationToServer(String token) {
         // Add custom implementation, as needed.
-        new AmazonSNSClient(GoogleOAuthActivity.credentialsProvider).createPlatformEndpoint(
+        AmazonSNSClient sns = new AmazonSNSClient(GoogleOAuthActivity.credentialsProvider);
+        sns.createPlatformEndpoint(
                 new CreatePlatformEndpointRequest()
                         .withToken(token)
                         .withPlatformApplicationArn("arn:aws:sns:us-east-1:897514720130:app/GCM/Blast"));
