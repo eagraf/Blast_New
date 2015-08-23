@@ -3,13 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:padding="6dip"
-    android:descendantFocusability="blocksDescendants" >
+    android:descendantFocusability="blocksDescendants"
+    android:onClick="changeName">
 
     <TextView
         android:id="@+id/firstLine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/secondLine"
+        android:layout_above="@id/name"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_alignWithParentIfMissing="true"

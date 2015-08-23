@@ -1,39 +1,33 @@
 package com.ethangraf.blast;
 
-/**
- * Created by Ethan on 8/22/2015.
- */
-
-import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by Ethan on 8/8/2015.
+ * Created by Ethan on 8/22/2015.
  */
-public class OptionsActivity extends AppCompatActivity {
+public class OptionsActivity extends AppCompatActivity implements NameDialogFragment.NameDialogListener {
     private RecyclerView mOptionsView;
     private RecyclerView.LayoutManager mOptionsLayoutManager;
-    private MessageAdapter mOptionsAdapter;
+    private OptionsAdapter mOptionsAdapter;
 
     private Group group;
-
-    private static final String planets[] = new String[] {"Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_message);
+        setContentView(R.layout.activity_options);
 
         //Set up the toolbar
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -45,13 +39,16 @@ public class OptionsActivity extends AppCompatActivity {
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NavUtils.navigateUpFromSameTask(OptionsActivity.this);
+                Intent intent = new Intent(OptionsActivity.this, MessageActivity.class);
+                intent.putExtra(MainActivity.MESSAGE_VIEW_GROUP, group);
+
+                NavUtils.navigateUpTo(OptionsActivity.this, intent);
             }
         });
 
         // Get the title from the intent and set it as the title for the activity.
         Bundle b = getIntent().getExtras();
-        group = (Group) b.getParcelable(MainActivity.MESSAGE_VIEW_GROUP);
+        group = (Group) b.getParcelable(MessageActivity.OPTIONS_VIEW_GROUP);
 
         getSupportActionBar().setTitle(R.string.menu_people);
 
@@ -60,13 +57,57 @@ public class OptionsActivity extends AppCompatActivity {
         mOptionsLayoutManager = new LinearLayoutManager(this);
         mOptionsView.setLayoutManager(mOptionsLayoutManager);
 
-        // specify an adapter (see also next example)
-        mOptionsAdapter = new MessageAdapter(group.getGroupID());
-        mOptionsView.setAdapter(mOptionsAdapter);
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mOptionsView.setHasFixedSize(true);
+
+        new AsyncTask<Void, Void, Void>() {
+            List<User> users = new ArrayList<>();
+            @Override
+            protected Void doInBackground(Void... params) {
+                //DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+                for (int i = 0; i < group.getSubscribers().size(); i++) {
+                    users.add(MainActivity.mapper.load(User.class, group.getSubscribers().get(i)));
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+
+                // specify an adapter (see also next example)
+                mOptionsAdapter = new OptionsAdapter(group, users);
+                mOptionsView.setAdapter(mOptionsAdapter);
+
+                // use this setting to improve performance if you know that changes
+                // in content do not change the layout size of the RecyclerView
+                 mOptionsView.setHasFixedSize(true);
+            }
+        }.execute();
+    }
+
+    //Change the name of the group
+    public void changeName(View v) {
+        // Create an instance of the new group dialog fragment and show it
+        NameDialogFragment dialog = new NameDialogFragment();
+        dialog.setTitle(getResources().getString(R.string.dialog_rename_group));
+        dialog.setEditText(group.getDisplayName());
+        dialog.setDefaultText(group.getDisplayName());
+        dialog.show(getSupportFragmentManager(), "NewGroupDialogFragment");
+
+        ((TextView) v.findViewById(R.id.name)).setText(group.getDisplayName());
+    }
+
+    @Override
+    public void onDialogPositiveClick(NameDialogFragment dialog, String groupName) {
+        group.setDisplayName(groupName);
+
+        new MainActivity.Save().execute(group);
+    }
+
+    @Override
+    //Negative click on New Group Dialog
+    public void onDialogNegativeClick(NameDialogFragment dialog) {
+        // User touched the dialog's negative button
+        // Nothing happens
     }
 
 }

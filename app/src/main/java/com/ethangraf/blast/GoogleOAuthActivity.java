@@ -139,7 +139,7 @@ public class GoogleOAuthActivity extends Activity implements
                     credentialsProvider.setLogins(logins);
                     credentialsProvider.refresh();
 
-                    //Log.i("GOAA",credentialsProvider.getIdentityId());
+                    //Log.i("GOAA",credentialsProvider.getIdenwaittityId());
 
                     AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(credentialsProvider);
                     MainActivity.mapper = new DynamoDBMapper(ddbClient);

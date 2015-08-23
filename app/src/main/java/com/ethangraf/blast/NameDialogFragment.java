@@ -13,25 +13,31 @@ import android.widget.EditText;
 /**
  * Created by Ethan on 8/8/2015.
  */
-public class NewGroupDialogFragment extends DialogFragment {
+public class NameDialogFragment extends DialogFragment {
 
     /* The activity that creates an instance of this dialog fragment must
      * implement this interface in order to receive event callbacks.
      * Each method passes the DialogFragment in case the host needs to query it. */
-    public interface NewGroupDialogListener {
-        public void onDialogPositiveClick(NewGroupDialogFragment dialog, String groupName);
-        public void onDialogNegativeClick(NewGroupDialogFragment dialog);
+    public interface NameDialogListener {
+        public void onDialogPositiveClick(NameDialogFragment dialog, String groupName);
+        public void onDialogNegativeClick(NameDialogFragment dialog);
     }
 
     // Use this instance of the interface to deliver action events
-    NewGroupDialogListener mListener;
+    NameDialogListener mListener;
 
     public String title = "default_title";
     public String name = "default_name";
+    public String text = "";
+    public String defaultText = "";
 
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public void setEditText(String text) { this.text = text; }
+
+    public void setDefaultText(String defaultText) { this.defaultText = defaultText; }
 
     // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
     @Override
@@ -40,7 +46,7 @@ public class NewGroupDialogFragment extends DialogFragment {
         // Verify that the host activity implements the callback interface
         try {
             // Instantiate the NoticeDialogListener so we can send events to the host
-            mListener = (NewGroupDialogListener) activity;
+            mListener = (NameDialogListener) activity;
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(activity.toString()
@@ -54,10 +60,11 @@ public class NewGroupDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         //Get layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_new_group, null);
+        View view = inflater.inflate(R.layout.dialog_name, null);
 
         //Get the EditText element from the dialog box
         final EditText editText = (EditText) view.findViewById(R.id.group_name);
+        editText.setText(text);
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
@@ -66,15 +73,15 @@ public class NewGroupDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialog, int id) {
                 String groupName = editText.getText().toString();
                 if (groupName.equals("")) {
-                    groupName = getResources().getString(R.string.dialog_new_group);
+                    groupName = defaultText;
                 }
-                mListener.onDialogPositiveClick(NewGroupDialogFragment.this, groupName);
+                mListener.onDialogPositiveClick(NameDialogFragment.this, groupName);
             }
         })
                 .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog
-                        mListener.onDialogNegativeClick(NewGroupDialogFragment.this);
+                        mListener.onDialogNegativeClick(NameDialogFragment.this);
                     }
                 });
         // Create the AlertDialog object and return it

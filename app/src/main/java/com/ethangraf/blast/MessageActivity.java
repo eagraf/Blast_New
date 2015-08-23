@@ -1,6 +1,7 @@
 package com.ethangraf.blast;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -41,6 +42,8 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
 
     private static final String planets[] = new String[] {"Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"};
 
+    public final static String OPTIONS_VIEW_GROUP = "com.ethangraf.blast.OPTIONSGROUP";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,12 +63,11 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
             }
         });
 
-        // Get the title from the intent and set it as the title for the activity.
-        Bundle b = getIntent().getExtras();
-        group = (Group) b.getParcelable(MainActivity.MESSAGE_VIEW_GROUP);
+        Intent intent = getIntent();
+        group = (Group) intent.getParcelableExtra(MainActivity.MESSAGE_VIEW_GROUP);
 
         //Show post view if editor or owner
-        if(group.getOwner().equals(MainActivity.user.getIdentityID()) || group.getEditors().contains(MainActivity.user.getIdentityID())) {
+        if(group.getEditors().contains(MainActivity.user.getIdentityID())) {
             findViewById(R.id.post_view).setVisibility(View.VISIBLE);
         }
 
@@ -176,6 +178,9 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_group_people:
+                Intent intent = new Intent(this, OptionsActivity.class);
+                intent.putExtra(OPTIONS_VIEW_GROUP, group);
+                startActivity(intent);
                 return true;
             case R.id.menu_group_archive:
                 return true;
@@ -185,7 +190,7 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
                     protected Void doInBackground(Void... params) {
                         //Delete subscription from each user
                         for(int i = 0; i < group.getSubscribers().size(); i++) {
-                            MainActivity.mapper.load(User.class, group.getSubscribers().get(i)).getSubscriptions().remove(group.getGroupID());
+                            MainActivity.mapper.load(User.class, group.getSubscribers().get(i)).removeSubscription(group.getGroupID());
                         }
 
                         //Delete messages

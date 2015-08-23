@@ -6,7 +6,7 @@
     android:descendantFocusability="blocksDescendants" >
 
     <TextView
-        android:id="@+id/firstLine"
+        android:id="@+id/notifications"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -18,9 +18,9 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/checkBox"
+        android:id="@+id/checkBox_notifications"
         android:layout_centerVertical="true"
-        android:layout_alignRight="@+id/firstLine"
-        android:layout_alignEnd="@+id/firstLine" />
+        android:layout_alignRight="@+id/notifications"
+        android:layout_alignEnd="@+id/notifications" />
 
 </RelativeLayout>
