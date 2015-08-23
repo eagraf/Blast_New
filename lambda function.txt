@@ -6,12 +6,20 @@ var util = require('util')
 exports.handler = function(event, context) {
     console.log('Received event:', JSON.stringify(event, null, 2));
     
+    if(event.Records[0].eventName!="INSERT"){
+        context.succeed("not insert");
+    }else{
+    
     var sns = new AWS.SNS();
+    
     
     var message = JSON.stringify({
     "default":"hey",
-    "GCM": util.format('{"data":{"message":"%s"}}', event.Records[0].dynamodb.NewImage.Subject.S)
+    "GCM": util.format('{"data":{"json":%s}}', JSON.stringify(event.Records[0].dynamodb.NewImage))
     });
+    
+    console.log(message);
+    
     var params = {
         Message: message, /* required */
         MessageStructure: 'json',
@@ -25,4 +33,5 @@ exports.handler = function(event, context) {
         context.succeed("Succesful");
         console.log(data);           // successful response
     }});
+    }
 };
