@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
 
+    private static Fragment currentFragment;
     private BlastFragment blastFragment;
     private EventFragment eventFragment;
     private ReminderFragment reminderFragment;
@@ -44,37 +46,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*
-        // Initialize the Amazon Cognito credentials provider
-        final CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
-                getApplicationContext(),
-                "us-east-1:f08cf8f2-5a11-4756-a62a-97d65306a831", // Identity Pool ID
-                Regions.US_EAST_1 // Region
-        );
-        new Thread(new Runnable(){
-            @Override
-            public void run() {
-                GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
-                AccountManager am = AccountManager.get(MainActivity.this);
-                android.accounts.Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-                String token = null;
-                Log.i("MA", accounts[0].name+"");
-                try {
-                    token = GoogleAuthUtil.getToken(MainActivity.this, accounts[0].name,
-                            "audience:server:client_id:732247720107-c6tfotldj8qll205i6u65f3n54qphmo9.apps.googleusercontent.com");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (GoogleAuthException e) {
-                    e.printStackTrace();
-                }
-
-                AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(credentialsProvider);
-                mapper = new DynamoDBMapper(ddbClient);
-            }
-        }).start();
-
-
-*/
         //Initialize the fragment manager.
         fragmentManager = getFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
@@ -84,10 +55,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         groupFragment = new GroupFragment();
         eventFragment = new EventFragment();
         reminderFragment = new ReminderFragment();
-
-        //Start in the inbox fragment.
-        fragmentTransaction.add(R.id.main_content_frame, blastFragment);
-        fragmentTransaction.commit();
+        /*
+        System.out.println(savedInstanceState);
+        if(savedInstanceState != null) {
+            currentFragment = fragmentManager.getFragment(savedInstanceState, "fragment");
+            fragmentTransaction.replace(R.id.main_content_frame, currentFragment);
+            fragmentTransaction.commit();
+            System.out.println(savedInstanceState);
+        }
+        else {
+            //Start in the inbox fragment.
+            fragmentTransaction.add(R.id.main_content_frame, blastFragment);
+            fragmentTransaction.commit();
+            currentFragment = blastFragment;
+            savedInstanceState = new Bundle();
+        }*/
+        if(currentFragment != null) {
+            fragmentTransaction.replace(R.id.main_content_frame, currentFragment);
+            fragmentTransaction.commit();
+        }
+        else {
+            fragmentTransaction.add(R.id.main_content_frame, blastFragment);
+            fragmentTransaction.commit();
+            currentFragment = blastFragment;
+        }
 
         //Initialize some navigation drawer stuff.
         mDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_layout);
@@ -98,11 +89,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.name)).setText(user.getName());
         ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.email)).setText(user.getIdentityID());
 
-
         // Start IntentService to register this application with GCM.
         Intent intent = new Intent(this, RegistrationIntentService.class);
         startService(intent);
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        System.out.println(outState);
+        fragmentManager.putFragment(outState, "fragment", currentFragment);
+        System.out.println(outState);
+        super.onSaveInstanceState(outState);
+        System.out.println(outState);
+    }
+
+   /* @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        System.out.println("ho");
+        if(savedInstanceState != null) {
+            currentFragment = fragmentManager.getFragment(savedInstanceState, "fragment");
+            fragmentTransaction.replace(R.id.main_content_frame, currentFragment);
+            fragmentTransaction.commit();
+        }
+        else {
+            //Start in the inbox fragment.
+            fragmentTransaction.add(R.id.main_content_frame, blastFragment);
+            fragmentTransaction.commit();
+            currentFragment = blastFragment;
+        }
+        super.onRestoreInstanceState(savedInstanceState);
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -130,18 +146,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //Open the inbox fragment.
                 fragmentTransaction.replace(R.id.main_content_frame, blastFragment);
                 fragmentTransaction.commit();
+                currentFragment = blastFragment;
                 break;
             case R.id.navigation_event_item:
                 fragmentTransaction.replace(R.id.main_content_frame, eventFragment);
                 fragmentTransaction.commit();
+                currentFragment = eventFragment;
                 break;
             case R.id.navigation_reminder_item:
                 fragmentTransaction.replace(R.id.main_content_frame, reminderFragment);
                 fragmentTransaction.commit();
+                currentFragment = reminderFragment;
                 break;
             case R.id.navigation_group_item:
                 fragmentTransaction.replace(R.id.main_content_frame, groupFragment);
                 fragmentTransaction.commit();
+                currentFragment = groupFragment;
                 break;
             case R.id.navigation_contact_item:
                 break;
