@@ -1,37 +1,117 @@
 console.log('Loading function');
 
 var AWS = require('aws-sdk');
-var util = require('util')
+var util = require('util');
 
 exports.handler = function(event, context) {
+    ctxt = context;
     console.log('Received event:', JSON.stringify(event, null, 2));
     
     if(event.Records[0].eventName!="INSERT"){
         context.succeed("not insert");
     }else{
     
-    var sns = new AWS.SNS();
+    sns = new AWS.SNS();
+    db = new AWS.DynamoDB();
     
+    var dbparams = {
+        TableName: 'Groups',
+        Key: {
+            "Group ID": {
+                "S": event.Records[0].dynamodb.NewImage["Group ID"].S
+            }
+        },
+        ProjectionExpression: 'Subscribers, DisplayName'
+    };
     
-    var message = JSON.stringify({
-    "default":"hey",
-    "GCM": util.format('{"data":{"json":%s}}', JSON.stringify(event.Records[0].dynamodb.NewImage))
+    db.getItem(dbparams, function(err, data) {
+        if (err){
+            console.log(err, err.stack); // an error occurred
+        } 
+        else{
+            console.log("db: ",data);           // successful response
+            numsubs = data.Item.Subscribers.L.length;
+            event.Records[0].dynamodb.NewImage.DisplayName = data.Item.DisplayName;
+            makemessage(event.Records[0].dynamodb.NewImage);
+            data.Item.Subscribers.L.forEach(function(element,index,array){
+               console.log(element); 
+               var getuserparams = {
+                   TableName: 'Users',
+                   Key: {
+                       "Identity ID": {
+                           "S": element.S
+                       }
+                   },
+                   ProjectionExpression: 'SNSEndpoints'
+                };
+                db.getItem(getuserparams, function(err, data){
+                    if(err){
+                        console.log(err,err.stack);
+                    }else{
+                        console.log(data);
+                        data.Item.SNSEndpoints.L.forEach(function(element,index,array){
+                            console.log(element);
+                            notify(element.S);
+                        });
+                    }
+                });
+            });
+            endifdone();
+        }
     });
     
-    console.log(message);
-    
+    }
+};
+
+function notify(arn){
+    var endpointparams = {
+        EndpointArn: arn /* required */
+    };
+    sns.getEndpointAttributes(endpointparams, function(err, data) {
+        if (err){ 
+            console.log(err, err.stack); // an error occurred
+            numsubs--;
+            endifdone();
+        }
+        else{
+            console.log(arn, " is enabled ",data.Attributes.Enabled);           // successful response
+            if(data.Attributes.Enabled==='true'){
+                sendsns(arn);
+            }else{
+                numsubs--;
+                endifdone();
+            }
+        }
+    });
+}
+function sendsns(arn){
     var params = {
         Message: message, /* required */
         MessageStructure: 'json',
-        TopicArn: 'arn:aws:sns:us-east-1:897514720130:GroupMessages'
+        TargetArn: arn
     };
+    
     sns.publish(params, function(err, data) {
     if (err){
         console.log(err, err.stack); // an error occurred
+        numsubs--;
+        endifdone();
     } 
     else{
-        context.succeed("Succesful");
+        ///context.succeed("Succesful");
         console.log(data);           // successful response
+        numsubs--;
+        endifdone();
     }});
+}
+function endifdone(){
+    if(numsubs===0){
+        ctxt.succeed("success");
     }
-};
+}
+function makemessage(NewImage){
+    message = JSON.stringify({
+    "default":"hey",
+    "GCM": util.format('{"data":{"json":%s}}', JSON.stringify(NewImage))
+    });
+}

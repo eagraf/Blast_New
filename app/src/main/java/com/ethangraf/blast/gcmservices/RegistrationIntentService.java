@@ -9,7 +9,9 @@ import android.util.Log;
 
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.CreatePlatformEndpointRequest;
+import com.amazonaws.services.sns.model.CreatePlatformEndpointResult;
 import com.ethangraf.blast.GoogleOAuthActivity;
+import com.ethangraf.blast.MainActivity;
 import com.ethangraf.blast.R;
 import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -47,7 +49,7 @@ public class RegistrationIntentService extends IntentService {
             // [END get_token]
             Log.i(TAG, "GCM Registration Token: " + token);
 
-            if(sharedPreferences.getBoolean(SENT_TOKEN_TO_SERVER,false)){
+            if(!sharedPreferences.getBoolean(SENT_TOKEN_TO_SERVER,false)){
                 sendRegistrationToServer(token);
             }
 
@@ -81,10 +83,11 @@ public class RegistrationIntentService extends IntentService {
     private void sendRegistrationToServer(String token) {
         // Add custom implementation, as needed.
         AmazonSNSClient sns = new AmazonSNSClient(GoogleOAuthActivity.credentialsProvider);
-        sns.createPlatformEndpoint(
+        CreatePlatformEndpointResult endpointResult = sns.createPlatformEndpoint(
                 new CreatePlatformEndpointRequest()
                         .withToken(token)
                         .withPlatformApplicationArn("arn:aws:sns:us-east-1:897514720130:app/GCM/Blast"));
+        MainActivity.user.addEndpoint(endpointResult.getEndpointArn());
     }
 
     /**
