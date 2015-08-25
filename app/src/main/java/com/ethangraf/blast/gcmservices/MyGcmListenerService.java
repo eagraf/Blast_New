@@ -11,8 +11,6 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.ethangraf.blast.GoogleOAuthActivity;
-import com.ethangraf.blast.Group;
-import com.ethangraf.blast.MainActivity;
 import com.ethangraf.blast.R;
 import com.google.android.gms.gcm.GcmListenerService;
 
@@ -44,12 +42,12 @@ public class MyGcmListenerService extends GcmListenerService {
             String subject = json.getJSONObject("Subject").getString("S");
             String body = json.getJSONObject("Body").getString("S");
             String groupid = json.getJSONObject("Group ID").getString("S");
+            String groupName = json.getJSONObject("DisplayName").getString("S");
 
             Log.d(TAG, "From: " + from);
             Log.d(TAG, "Message: " + subject);
             Log.d(TAG, "Date Time: " + dateposted);
 
-            String groupName = MainActivity.mapper.load(Group.class,groupid).getDisplayName();
 
             if (from.startsWith("/topics/")) {
                 // message received from some topic.

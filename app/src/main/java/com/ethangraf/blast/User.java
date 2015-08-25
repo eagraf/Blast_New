@@ -15,6 +15,7 @@ public class User {
     String identityID;
     String name;
     List<String> subscriptions;
+    private List<String> endpoints;
 
     @DynamoDBHashKey(attributeName = "Identity ID")
     public String getIdentityID() {
@@ -52,4 +53,19 @@ public class User {
         this.subscriptions.remove(subscription);
         new MainActivity.Save().execute(this);
     }
+
+    @DynamoDBAttribute(attributeName = "SNSEndpoints")
+    public List<String> getEndpoints(){
+        return endpoints;
+    }
+
+    public void setEndpoints(List<String> endpoints){
+        this.endpoints = endpoints;
+    }
+
+    public void addEndpoint(String endpoint){
+        this.endpoints.add(endpoint);
+        new MainActivity.Save().execute(this);
+    }
+
 }

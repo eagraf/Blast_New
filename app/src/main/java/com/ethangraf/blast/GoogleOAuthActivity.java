@@ -155,6 +155,10 @@ public class GoogleOAuthActivity extends Activity implements
                         user.setSubscriptions(new ArrayList<String>());
                         new MainActivity.Save().execute(user);
                     }
+                    if(user.getEndpoints() == null){
+                        user.setEndpoints(new ArrayList<String>());
+                        new MainActivity.Save().execute(user);
+                    }
                     MainActivity.user = user;
                     System.out.println(user.getName());
 
