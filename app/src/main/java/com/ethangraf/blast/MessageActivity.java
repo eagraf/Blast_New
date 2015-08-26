@@ -1,15 +1,19 @@
 package com.ethangraf.blast;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +27,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
+import com.ethangraf.blast.gcmservices.MyGcmListenerService;
 
 import java.util.List;
 
@@ -43,11 +48,23 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
     private static final String planets[] = new String[] {"Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"};
 
     public final static String OPTIONS_VIEW_GROUP = "com.ethangraf.blast.OPTIONSGROUP";
+    private BroadcastReceiver mNotificationBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
+
+        //create receiver for notifications to update ui
+        mNotificationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d("MessageActivity", "received broadcast");
+                if(intent.getStringExtra("groupid").equals(group.getGroupID())){
+                    mMessageAdapter.refreshFromDatabase();
+                }
+            }
+        };
 
         //Set up the toolbar
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -79,7 +96,7 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
         mMessageView.setLayoutManager(mMessageLayoutManager);
 
         // specify an adapter (see also next example)
-        mMessageAdapter = new MessageAdapter(group.getGroupID(),this);
+        mMessageAdapter = new MessageAdapter(group.getGroupID(),this,mMessageView);
         mMessageView.setAdapter(mMessageAdapter);
 
         // use this setting to improve performance if you know that changes
@@ -209,6 +226,18 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
             default:
                 return false;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mNotificationBroadcastReceiver,
+                new IntentFilter(MyGcmListenerService.MESSAGE_UPDATE));
+    }
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mNotificationBroadcastReceiver);
+        super.onPause();
     }
 }
 

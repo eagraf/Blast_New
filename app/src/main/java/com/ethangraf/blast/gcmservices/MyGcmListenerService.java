@@ -8,6 +8,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.ethangraf.blast.GoogleOAuthActivity;
@@ -23,6 +24,7 @@ import org.json.JSONObject;
 public class MyGcmListenerService extends GcmListenerService {
 
     private static final String TAG = "MyGcmListenerService";
+    public static final String MESSAGE_UPDATE = "message_updated";
 
     /**
      * Called when message is received.
@@ -55,6 +57,9 @@ public class MyGcmListenerService extends GcmListenerService {
                 // normal downstream message.
             }
 
+            Intent intent = new Intent(MESSAGE_UPDATE);
+            intent.putExtra("groupid",groupid);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
             sendNotification(groupName, subject);
         }catch (JSONException e){
             e.printStackTrace();
