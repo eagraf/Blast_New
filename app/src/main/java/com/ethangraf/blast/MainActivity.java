@@ -10,6 +10,7 @@ import android.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -46,6 +47,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Initialize some navigation drawer stuff.
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_layout);
+        mDrawerView = (NavigationView) findViewById(R.id.navigation_view);
+        mDrawerView.setNavigationItemSelectedListener(this);
+
+        //Set up the toolbar
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+
+        //Enable ActionBar app icon to behave as action to toggle nav drawer
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.setNavigationIcon(R.mipmap.ic_menu_white_24dp);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
         //Initialize the fragment manager.
         fragmentManager = getFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
@@ -79,11 +99,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragmentTransaction.commit();
             currentFragment = blastFragment;
         }
-
-        //Initialize some navigation drawer stuff.
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_layout);
-        mDrawerView = (NavigationView) findViewById(R.id.navigation_view);
-        mDrawerView.setNavigationItemSelectedListener(this);
 
         //Set the navigation drawer information.
         ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.name)).setText(user.getName());
@@ -119,21 +134,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         super.onRestoreInstanceState(savedInstanceState);
     }*/
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        switch(id) {
-            case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     //Handle click events on navigation drawer items.

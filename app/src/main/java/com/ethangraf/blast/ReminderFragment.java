@@ -31,21 +31,6 @@ public class ReminderFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_reminder, container, false);
 
-        //Set up the toolbar
-        Toolbar mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.reminders);
-
-        //Enable ActionBar app icon to behave as action to toggle nav drawer
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mToolbar.setNavigationIcon(R.mipmap.ic_menu_white_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) getActivity()).getDrawerLayout().openDrawer(GravityCompat.START);
-            }
-        });
-
         setHasOptionsMenu(true);
 
         mReminderView = (RecyclerView) view.findViewById(R.id.reminder_list_view);
