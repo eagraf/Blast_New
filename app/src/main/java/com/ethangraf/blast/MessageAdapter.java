@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,25 +23,33 @@ import java.util.List;
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder>{
 
     private final Context context;
+    private final String uid;
+    private final RecyclerView messageView;
     private List<Message> mDataSet = new ArrayList<>();
 
-    public MessageAdapter(final String uid, Context context) {
-        this.context = context;
-        new AsyncTask<Void,Void,Void>(){
-            @Override
-            protected Void doInBackground(Void... params) {
-                Message model = new Message();
-                model.setGroupID(uid);
-                DynamoDBQueryExpression queryExpression = new DynamoDBQueryExpression().withHashKeyValues(model);
-                mDataSet = MainActivity.mapper.query(Message.class, queryExpression);
-                return null;
-            }
+    class Refresh extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected Void doInBackground(Void... params) {
+            Message model = new Message();
+            model.setGroupID(uid);
+            DynamoDBQueryExpression queryExpression = new DynamoDBQueryExpression().withHashKeyValues(model);
+            mDataSet = MainActivity.mapper.query(Message.class, queryExpression);
+            return null;
+        }
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                notifyDataSetChanged();
-            }
-        }.execute();    }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            messageView.scrollToPosition(getItemCount()-1);
+            notifyDataSetChanged();
+        }
+    };
+
+    public MessageAdapter(final String uid, Context context, RecyclerView messageView) {
+        this.context = context;
+        this.uid = uid;
+        this.messageView = messageView;
+        refreshFromDatabase();
+    }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -87,5 +96,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @Override
     public int getItemCount() {
         return mDataSet.size();
+    }
+
+    public void refreshFromDatabase(){
+        Log.i("MessageAdapter", "refreshing");
+        new Refresh().execute();
     }
 }

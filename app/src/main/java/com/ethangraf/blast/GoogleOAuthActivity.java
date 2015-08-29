@@ -160,6 +160,7 @@ public class GoogleOAuthActivity extends Activity implements
                         new MainActivity.Save().execute(user);
                     }
                     MainActivity.user = user;
+                    getSharedPreferences("com.ethangraf.blast",MODE_PRIVATE).edit().putString("user",user.getIdentityID()).commit();
                     System.out.println(user.getName());
 
                     return true;
