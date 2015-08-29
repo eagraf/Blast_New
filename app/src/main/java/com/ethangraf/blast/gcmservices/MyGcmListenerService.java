@@ -35,6 +35,7 @@ public class MyGcmListenerService extends GcmListenerService {
             String subject = json.getJSONObject("Subject").getString("S");
             String body = json.getJSONObject("Body").getString("S");
             String groupid = json.getJSONObject("Group ID").getString("S");
+            String author = json.getJSONObject("Author").getString("S");
             String groupName = json.getJSONObject("DisplayName").getString("S");
 
             Log.d(TAG, "From: " + from);
@@ -52,6 +53,8 @@ public class MyGcmListenerService extends GcmListenerService {
             intent.putExtra("groupid",groupid);
             intent.putExtra("groupname",groupName);
             intent.putExtra("subject",subject);
+            intent.putExtra("author",author);
+
             this.sendOrderedBroadcast(intent,null);
         }catch (JSONException e){
             e.printStackTrace();

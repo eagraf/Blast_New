@@ -171,6 +171,7 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
         msg.setSubject(subject.getText().toString());
         msg.setBody(body.getText().toString());
         msg.setDatePosted(datePosted);
+        msg.setAuthor(MainActivity.user.getIdentityID());
 
         new MainActivity.Save().execute(msg);
 
