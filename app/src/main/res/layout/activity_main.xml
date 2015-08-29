@@ -9,11 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <include layout="@layout/toolbar"
+            android:id="@+id/toolbar"/>
+
         <!--Where the fragment goes-->
         <FrameLayout
             android:id="@+id/main_content_frame"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_below="@id/toolbar"/>
 
     </RelativeLayout>
 
@@ -23,7 +27,6 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
         app:headerLayout="@layout/header_navigation"
         app:menu="@menu/menu_navigation" />
 
