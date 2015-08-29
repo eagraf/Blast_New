@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -55,12 +54,14 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
 
-        //create receiver for notifications to update ui
+        //create receiver for notifications to update ui. Will also abort intent broadcast to stop
+        //pop up notification, as in every IM app
         mNotificationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d("MessageActivity", "received broadcast");
                 if(intent.getStringExtra("groupid").equals(group.getGroupID())){
+                    abortBroadcast();
                     mMessageAdapter.refreshFromDatabase();
                 }
             }
@@ -231,12 +232,15 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
     @Override
     protected void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(mNotificationBroadcastReceiver,
-                new IntentFilter(MyGcmListenerService.MESSAGE_UPDATE));
+        //Register receiver responsible for updating UI when notification comes in.
+        IntentFilter filter = new IntentFilter(MyGcmListenerService.MESSAGE_UPDATE);
+        filter.setPriority(1);
+        registerReceiver(mNotificationBroadcastReceiver,
+                filter);
     }
     @Override
     protected void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mNotificationBroadcastReceiver);
+        unregisterReceiver(mNotificationBroadcastReceiver);
         super.onPause();
     }
 }

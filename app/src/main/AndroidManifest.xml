@@ -92,5 +92,12 @@
             android:name="com.ethangraf.blast.gcmservices.RegistrationIntentService"
             android:exported="false">
         </service>
+        <receiver
+            android:name=".gcmservices.GcmNotificationRaisingBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.ethangraf.blast.message_updated"/>
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>
