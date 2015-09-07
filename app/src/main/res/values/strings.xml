@@ -50,4 +50,7 @@
     <string name="PROJECT_ID">732247720107</string>
     <string name="scope">Public</string>
 
+    <!--Inviting-->
+    <string name="invite">Invite People</string>
+
 </resources>

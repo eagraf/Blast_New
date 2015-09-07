@@ -1,4 +1,4 @@
-package com.ethangraf.blast;
+package com.ethangraf.blast.database;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribute;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;

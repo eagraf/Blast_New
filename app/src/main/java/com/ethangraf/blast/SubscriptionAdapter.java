@@ -10,8 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
-
-import org.w3c.dom.Text;
+import com.ethangraf.blast.database.Group;
 
 import java.util.ArrayList;
 import java.util.List;

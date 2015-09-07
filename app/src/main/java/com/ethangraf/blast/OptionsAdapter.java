@@ -7,12 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.ethangraf.blast.database.Group;
+import com.ethangraf.blast.database.User;
+
 import java.util.List;
 
 /**
@@ -111,7 +111,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 new AsyncTask<ViewHolderPerson, Void, Void>() {
                     @Override
                     protected Void doInBackground(ViewHolderPerson... vh) {
-                        ((ViewHolderPerson) vh[0]).user = MainActivity.mapper.load(User.class, OptionsAdapter.this.users.get(vh[0].index).getIdentityID());
+                        ((ViewHolderPerson) vh[0]).user = MainActivity.mapper.load(User.class, OptionsAdapter.this.users.get(vh[0].index).getId());
                         return null;
                     }
 
@@ -119,8 +119,8 @@ public class OptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 
                 //If the user is the owner, they are able to see checkboxes to let people edit
-                if(group.getOwner().equals(MainActivity.user.getIdentityID())) {
-                    if(group.getEditors().contains(users.get(i - 3).getIdentityID())) {
+                if(group.getOwner().equals(MainActivity.user.getId())) {
+                    if(group.getEditors().contains(users.get(i - 3).getId())) {
                         ((ViewHolderPerson) viewHolder).checkBox.setChecked(true);
                     }
                     ((ViewHolderPerson) viewHolder).checkBox.setVisibility(View.VISIBLE);
@@ -132,10 +132,10 @@ public class OptionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     @Override
                     public void onCheckedChanged(CompoundButton button, boolean checked) {
                         if (checked){
-                            group.addEditor(((ViewHolderPerson) viewHolder).user.getIdentityID());
+                            group.addEditor(((ViewHolderPerson) viewHolder).user.getId());
                         }
                         else {
-                            group.removeEditor(((ViewHolderPerson) viewHolder).user.getIdentityID());
+                            group.removeEditor(((ViewHolderPerson) viewHolder).user.getId());
                         }
                     }
                 });

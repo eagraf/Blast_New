@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import com.ethangraf.blast.database.Group;
+
 /**
  * Created by Ethan on 8/8/2015.
  */

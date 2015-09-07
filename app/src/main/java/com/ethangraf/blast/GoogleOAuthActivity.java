@@ -14,16 +14,23 @@ import android.util.Log;
 
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.PaginatedQueryList;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.ethangraf.blast.database.User;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.PersonBuffer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +39,8 @@ import java.util.Map;
 
 public class GoogleOAuthActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener,
+        ResultCallback<People.LoadPeopleResult> {
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
@@ -144,24 +152,36 @@ public class GoogleOAuthActivity extends Activity implements
                     AmazonDynamoDBClient ddbClient = new AmazonDynamoDBClient(credentialsProvider);
                     MainActivity.mapper = new DynamoDBMapper(ddbClient);
 
-                    User user = MainActivity.mapper.load(User.class, Plus.AccountApi.getAccountName(mGoogleApiClient));
+                    User user = MainActivity.mapper.load(User.class, credentialsProvider.getIdentityId());
                     if(user == null) {
+                        //Enter a new user into the database through Google's identity platform.
                         user = new User();
-                        user.setIdentityID(Plus.AccountApi.getAccountName(mGoogleApiClient));
+
+                        String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                        String googleId = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient).getId();
+
+                        user.setId(credentialsProvider.getIdentityId());
+                        user.setEmail(email);
+                        user.setGoogleId(googleId);
                         user.setName(Plus.PeopleApi.getCurrentPerson(mGoogleApiClient).getDisplayName());
                         new MainActivity.Save().execute(user);
                     }
                     if(user.getSubscriptions() == null) {
+                        //Initialize subscriptions.
                         user.setSubscriptions(new ArrayList<String>());
                         new MainActivity.Save().execute(user);
                     }
                     if(user.getEndpoints() == null){
+                        //Initialize endpoints.
                         user.setEndpoints(new ArrayList<String>());
                         new MainActivity.Save().execute(user);
                     }
                     MainActivity.user = user;
-                    getSharedPreferences("com.ethangraf.blast",MODE_PRIVATE).edit().putString("user",user.getIdentityID()).commit();
+                    getSharedPreferences("com.ethangraf.blast",MODE_PRIVATE).edit().putString("user", user.getId()).commit();
                     System.out.println(user.getName());
+
+                    Plus.PeopleApi.loadVisible(mGoogleApiClient, null)
+                            .setResultCallback(GoogleOAuthActivity.this);
 
                     return true;
                 }
@@ -250,6 +270,55 @@ public class GoogleOAuthActivity extends Activity implements
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onResult(People.LoadPeopleResult peopleData) {
+        if (peopleData.getStatus().getStatusCode() == CommonStatusCodes.SUCCESS) {
+            PersonBuffer personBuffer = peopleData.getPersonBuffer();
+            try {
+                for (int i = 0; i < personBuffer.getCount(); i++) {
+                    Log.d(TAG, "Display name: " + personBuffer.get(i).getDisplayName());
+
+                    User contact = new User();
+                    contact.setGoogleId(personBuffer.get(i).getId());
+
+                    final DynamoDBQueryExpression queryExpression = new DynamoDBQueryExpression()
+                            .withHashKeyValues(contact)
+                            .withConsistentRead(false);
+
+                    new AsyncTask<DynamoDBQueryExpression, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(DynamoDBQueryExpression... queryExpressions) {
+
+                            boolean containsContact = false;
+                            for(int i = 0; i < MainActivity.user.getContacts().size(); i++) {
+                                User contact = MainActivity.mapper.load(User.class, MainActivity.user.getContacts().get(i));
+                                if(contact.getId().equals(((User) queryExpressions[0].getHashKeyValues()).getId())) {
+                                    containsContact = true;
+                                    System.out.println("JGIEJGIEIF");
+                                }
+                            }
+                            if(!containsContact) {
+                                PaginatedQueryList<User> result = MainActivity.mapper.query(User.class, queryExpressions[0]);
+
+                                if (result.size() > 0) {
+                                    MainActivity.user.addContact(result.get(0).getId());
+                                }
+                            }
+                            return null;
+                        }
+
+                    }.execute(queryExpression);
+                }
+
+
+            } finally {
+                personBuffer.release();
+            }
+        } else {
+            Log.e(TAG, "Error requesting visible circles: " + peopleData.getStatus());
+        }
     }
 
 }

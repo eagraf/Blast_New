@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ethangraf.blast.database.Group;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +28,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                //DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
                 for (int i = 0; i < subscriptions.size(); i++) {
                     mDataSet.add(MainActivity.mapper.load(Group.class, subscriptions.get(i)));
                 }

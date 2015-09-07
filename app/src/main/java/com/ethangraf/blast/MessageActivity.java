@@ -26,6 +26,9 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
+import com.ethangraf.blast.database.Group;
+import com.ethangraf.blast.database.Message;
+import com.ethangraf.blast.database.User;
 import com.ethangraf.blast.gcmservices.MyGcmListenerService;
 
 import java.util.List;
@@ -33,7 +36,9 @@ import java.util.List;
 /**
  * Created by Ethan on 8/8/2015.
  */
-public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
+public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener,
+        InviteDialogFragment.InviteDialogListener {
+
     private RecyclerView mMessageView;
     private RecyclerView.LayoutManager mMessageLayoutManager;
     private MessageAdapter mMessageAdapter;
@@ -85,11 +90,18 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
         group = (Group) intent.getParcelableExtra(MainActivity.MESSAGE_VIEW_GROUP);
 
         //Show post view if editor or owner
-        if(group.getEditors().contains(MainActivity.user.getIdentityID())) {
+        if(group.getEditors().contains(MainActivity.user.getId())) {
             findViewById(R.id.post_view).setVisibility(View.VISIBLE);
         }
 
         getSupportActionBar().setTitle(group.getDisplayName());
+
+        if(group.getSubscribers().size() == 1) {
+            if(group.getSubscribers().get(0).equals(group.getOwner()) && MainActivity.user.getId().equals(group.getOwner())) {
+                InviteDialogFragment dialog = new InviteDialogFragment();
+                dialog.show(getSupportFragmentManager(), "NewInviteDialogFragment");
+            }
+        }
 
         mMessageView = (RecyclerView) findViewById(R.id.message_list_view);
 
@@ -139,7 +151,7 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
                 if (!isChecked) {
                     // The toggle is enabled.
                     // Remove the subscription from database
-                    group.removeSubscriber(MainActivity.user.getIdentityID());
+                    group.removeSubscriber(MainActivity.user.getId());
                     MainActivity.user.removeSubscription(group.getGroupID());
 
                     textItem.setTitle("Subscribe");
@@ -147,7 +159,7 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
                 } else {
                     // The toggle is disabled
                     // Add the subscription from database
-                    group.addSubscriber(MainActivity.user.getIdentityID());
+                    group.addSubscriber(MainActivity.user.getId());
                     MainActivity.user.addSubscription(group.getGroupID());
 
                     textItem.setTitle("Subscribed");
@@ -171,7 +183,7 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
         msg.setSubject(subject.getText().toString());
         msg.setBody(body.getText().toString());
         msg.setDatePosted(datePosted);
-        msg.setAuthor(MainActivity.user.getIdentityID());
+        msg.setAuthor(MainActivity.user.getId());
 
         new MainActivity.Save().execute(msg);
 
@@ -243,6 +255,16 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
     protected void onPause() {
         unregisterReceiver(mNotificationBroadcastReceiver);
         super.onPause();
+    }
+
+    @Override
+    public void onDialogPositiveClick(InviteDialogFragment dialog) {
+
+    }
+
+    @Override
+    public void onDialogNegativeClick(InviteDialogFragment dialog) {
+
     }
 }
 

@@ -26,8 +26,6 @@ public class GroupFragment extends Fragment {
     public GroupAdapter mGroupAdapter;
     public RecyclerView.LayoutManager mGroupLayoutManager;
 
-    private static final String planets[] = new String[] {"Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"};
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment

@@ -16,6 +16,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.ethangraf.blast.database.Group;
+import com.ethangraf.blast.database.User;
 import com.ethangraf.blast.gcmservices.RegistrationIntentService;
 
 import java.util.UUID;
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //Set the navigation drawer information.
         ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.name)).setText(user.getName());
-        ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.email)).setText(user.getIdentityID());
+        ((TextView) findViewById(R.id.navigation_header).findViewById(R.id.email)).setText(user.getEmail());
 
         // Start IntentService to register this application with GCM.
         Intent intent = new Intent(this, RegistrationIntentService.class);
@@ -197,13 +199,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         group.setGroupID(UUID.randomUUID().toString());
         group.setDisplayName(groupName);
-        group.setOwner(user.getIdentityID());
+        group.setOwner(user.getId());
         group.setOwnerName(user.getName());
 
-        group.addSubscriber(user.getIdentityID());
+        group.addSubscriber(user.getId());
         user.addSubscription(group.getGroupID());
 
-        group.addEditor(user.getIdentityID());
+        group.addEditor(user.getId());
 
         new Save().execute(group);
     }
