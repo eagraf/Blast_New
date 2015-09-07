@@ -85,12 +85,12 @@ public class User {
     }
 
     public void addContact(String contact) {
-        this.subscriptions.add(contact);
+        this.contacts.add(contact);
         new MainActivity.Save().execute(this);
     }
 
     public void removeContacts(String contact) {
-        this.subscriptions.remove(contact);
+        this.contacts.remove(contact);
         new MainActivity.Save().execute(this);
     }
 
