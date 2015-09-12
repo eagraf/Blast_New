@@ -26,9 +26,6 @@ import java.util.List;
  */
 public class InvitesAdapter extends RecyclerView.Adapter<InvitesAdapter.ViewHolder> {
 
-    private List<String> contactIds;
-    private List<User> contacts = new ArrayList<>();
-
     private List<String> invites = new ArrayList<>();
     private List<Group> groups = new ArrayList<>();
 
@@ -126,6 +123,6 @@ public class InvitesAdapter extends RecyclerView.Adapter<InvitesAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return contacts.size();
+        return groups.size();
     }
 }
