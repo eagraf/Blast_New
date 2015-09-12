@@ -94,7 +94,7 @@ public class InvitesAdapter extends RecyclerView.Adapter<InvitesAdapter.ViewHold
             @Override
             public void onClick(View v) {
                 MainActivity.user.removeInvitation((group.getGroupID()));
-                invites.remove(group.getGroupID());
+                groups.remove(group);
                 notifyDataSetChanged();
             }
         }
@@ -108,8 +108,9 @@ public class InvitesAdapter extends RecyclerView.Adapter<InvitesAdapter.ViewHold
 
             @Override
             public void onClick(View v) {
-                MainActivity.user.addInvitation((group.getGroupID()));
-                invites.remove(group.getGroupID());
+                MainActivity.user.addSubscription((group.getGroupID()));
+                MainActivity.user.removeInvitation((group.getGroupID()));
+                groups.remove(group);
                 notifyDataSetChanged();
             }
         }

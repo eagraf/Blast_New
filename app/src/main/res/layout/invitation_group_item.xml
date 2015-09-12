@@ -22,30 +22,32 @@
         android:textSize="16sp"
         android:textColor="@color/Black"
         android:layout_alignTop="@+id/icon"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:layout_toRightOf="@+id/icon"
-        android:layout_toEndOf="@+id/icon" />
+        android:layout_toLeftOf="@+id/button_cancel"
+        android:layout_toStartOf="@+id/button_cancel" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Accept"
         android:id="@+id/button_accept"
-        android:layout_below="@+id/group"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_alignTop="@+id/button_cancel"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        style="?android:attr/borderlessButtonStyle" />
+        android:textColor="@color/Teal500" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Cancel"
         android:id="@+id/button_cancel"
-        android:layout_below="@+id/group"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/button_accept"
         android:layout_toStartOf="@+id/button_accept"
-        style="?android:attr/borderlessButtonStyle" />
+        android:enabled="true"
+        android:textColor="@color/Teal500" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -57,7 +59,7 @@
         android:layout_alignStart="@+id/group"
         android:layout_toLeftOf="@+id/button_cancel"
         android:layout_toStartOf="@+id/button_cancel"
-        android:layout_alignBottom="@+id/icon"
-        android:linksClickable="true" />
+        android:linksClickable="true"
+        android:layout_alignBottom="@+id/button_cancel" />
 
 </RelativeLayout>

@@ -137,7 +137,7 @@ public class User {
     }
 
     public void removeInvitation(String group) {
-        this.invitations.remove(invitations);
+        this.invitations.remove(group);
         new MainActivity.Save().execute(this);
     }
 
