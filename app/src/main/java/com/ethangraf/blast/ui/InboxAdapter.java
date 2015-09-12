@@ -1,4 +1,4 @@
-package com.ethangraf.blast;
+package com.ethangraf.blast.ui;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,17 +8,18 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ethangraf.blast.R;
+
 import java.util.List;
 
 /**
- * Created by Ethan on 8/9/2015.
+ * Created by Ethan on 8/8/2015.
  */
-
-public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHolder> {
+public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> {
 
     private List<String> mDataSet;
 
-    public ReminderAdapter(List<String> data) {
+    public InboxAdapter(List<String> data) {
         this.mDataSet = data;
     }
 
@@ -40,7 +41,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
 
     //Create new views (invoked by the layout manager)
     @Override
-    public ReminderAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public InboxAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         // create a new view
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.inbox_list_item, viewGroup, false);
         // set the view's size, margins, paddings and layout parameters
@@ -51,7 +52,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ReminderAdapter.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(InboxAdapter.ViewHolder viewHolder, int i) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         viewHolder.mSecondLine.setText(mDataSet.get(i));
@@ -62,4 +63,5 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
     public int getItemCount() {
         return mDataSet.size();
     }
+
 }

@@ -1,5 +1,6 @@
-package com.ethangraf.blast;
+package com.ethangraf.blast.ui;
 
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,17 +9,34 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
+import com.ethangraf.blast.R;
+import com.ethangraf.blast.database.Group;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Ethan on 8/8/2015.
  */
-public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> {
+public class SubscriptionAdapter extends RecyclerView.Adapter<SubscriptionAdapter.ViewHolder> {
 
-    private List<String> mDataSet;
+    private List<Group> mDataSet = new ArrayList<>();
 
-    public InboxAdapter(List<String> data) {
-        this.mDataSet = data;
+    public SubscriptionAdapter() {
+        new AsyncTask<Void,Void,Void>(){
+            @Override
+            protected Void doInBackground(Void... params) {
+                DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+                mDataSet = MainActivity.mapper.scan(Group.class, scanExpression);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                notifyDataSetChanged();
+            }
+        }.execute();
     }
 
     // Provide a reference to the views for each data item
@@ -29,19 +47,22 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
         public TextView mFirstLine;
         public TextView mSecondLine;
         public ImageView mProfileImage;
+        public TextView mGroupId;
+
         public ViewHolder(RelativeLayout v) {
             super(v);
             mFirstLine = (TextView) v.findViewById(R.id.firstLine);
             mSecondLine = (TextView) v.findViewById(R.id.secondLine);
             mProfileImage = (ImageView) v.findViewById(R.id.icon);
+            mGroupId = (TextView) v.findViewById(R.id.groupId);
         }
     }
 
     //Create new views (invoked by the layout manager)
     @Override
-    public InboxAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public SubscriptionAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         // create a new view
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.inbox_list_item, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.group_list_item, viewGroup, false);
         // set the view's size, margins, paddings and layout parameters
 
         ViewHolder vh = new ViewHolder((RelativeLayout) v);
@@ -50,16 +71,16 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(InboxAdapter.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(SubscriptionAdapter.ViewHolder viewHolder, int i) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        viewHolder.mSecondLine.setText(mDataSet.get(i));
-        viewHolder.mFirstLine.setText(mDataSet.get(i));
+        viewHolder.mSecondLine.setText(mDataSet.get(i).getOwnerName());
+        viewHolder.mFirstLine.setText(mDataSet.get(i).getDisplayName());
+        viewHolder.mGroupId.setText(mDataSet.get(i).getGroupID());
     }
 
     @Override
     public int getItemCount() {
         return mDataSet.size();
     }
-
 }

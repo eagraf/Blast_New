@@ -1,4 +1,4 @@
-package com.ethangraf.blast;
+package com.ethangraf.blast.ui;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
+import com.ethangraf.blast.R;
 import com.ethangraf.blast.database.Message;
 
 import java.util.ArrayList;

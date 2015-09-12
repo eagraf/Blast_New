@@ -5,4 +5,5 @@
     android:layout_width="match_parent"
     android:minHeight="?attr/actionBarSize"
     android:background="@color/DeepPurple500"
-    android:theme="@style/ToolbarTheme"/>
+    android:theme="@style/ToolbarTheme"
+    android:elevation="4dp"/>

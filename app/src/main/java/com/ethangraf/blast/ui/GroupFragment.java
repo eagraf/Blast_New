@@ -1,13 +1,10 @@
-package com.ethangraf.blast;
+package com.ethangraf.blast.ui;
 
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,7 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.Arrays;
+import com.ethangraf.blast.R;
 
 /**
  * Created by Ethan on 8/8/2015.
@@ -62,8 +59,12 @@ public class GroupFragment extends Fragment {
         int id = item.getItemId();
         switch(id) {
             case R.id.action_add_group:
-                Intent intent = new Intent(getActivity(), SubscriptionActivity.class);
-                startActivity(intent);
+                Intent sIntent = new Intent(getActivity(), SubscriptionActivity.class);
+                startActivity(sIntent);
+                return true;
+            case R.id.action_invites:
+                Intent iIntent = new Intent(getActivity(), InvitesActivity.class);
+                startActivity(iIntent);
                 return true;
         }
 

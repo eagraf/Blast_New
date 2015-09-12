@@ -1,4 +1,4 @@
-package com.ethangraf.blast;
+package com.ethangraf.blast.calendar;
 
 import android.content.Context;
 import android.content.SharedPreferences;

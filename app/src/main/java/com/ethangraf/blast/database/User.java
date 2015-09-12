@@ -4,7 +4,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribut
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexHashKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
-import com.ethangraf.blast.MainActivity;
+import com.ethangraf.blast.ui.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,9 @@ public class User {
 
     private List<String> subscriptions = new ArrayList<>();
     private List<String> contacts = new ArrayList<>();
+
+    private List<String> invitations = new ArrayList<>();
+    private List<String> newInvitations = new ArrayList<>();
 
     private List<String> endpoints;
 
@@ -117,5 +120,43 @@ public class User {
 
     public void setGoogleId(String googleId) {
         this.googleId = googleId;
+    }
+
+    @DynamoDBAttribute(attributeName = "Invitations")
+    public List<String> getInvitations() {
+        return invitations;
+    }
+
+    public void setInvitations(List<String> invitations) {
+        this.invitations = invitations;
+    }
+
+    public void addInvitation(String group) {
+        this.invitations.add(group);
+        new MainActivity.Save().execute(this);
+    }
+
+    public void removeInvitation(String group) {
+        this.invitations.remove(invitations);
+        new MainActivity.Save().execute(this);
+    }
+
+    @DynamoDBAttribute(attributeName = "New Invitations")
+    public List<String> getNewInvitations() {
+        return newInvitations;
+    }
+
+    public void setNewInvitations(List<String> invitations) {
+        this.newInvitations = invitations;
+    }
+
+    public void addNewInvitation(String group) {
+        this.newInvitations.add(group);
+        new MainActivity.Save().execute(this);
+    }
+
+    public void removeNewInvitation(String group) {
+        this.newInvitations.remove(invitations);
+        new MainActivity.Save().execute(this);
     }
 }

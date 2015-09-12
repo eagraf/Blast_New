@@ -26,6 +26,7 @@
 
     <!--Action Button Strings-->
     <string name="add_group">Add Group</string>
+    <string name="invites">Invites</string>
 
     <string name="find_groups">Find Groups</string>
 

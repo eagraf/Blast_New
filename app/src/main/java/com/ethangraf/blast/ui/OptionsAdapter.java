@@ -1,4 +1,4 @@
-package com.ethangraf.blast;
+package com.ethangraf.blast.ui;
 
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +10,7 @@ import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ethangraf.blast.R;
 import com.ethangraf.blast.database.Group;
 import com.ethangraf.blast.database.User;
 

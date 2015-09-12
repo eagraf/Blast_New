@@ -1,4 +1,4 @@
-package com.ethangraf.blast;
+package com.ethangraf.blast.ui;
 
 /**
  * Created by Da-Jin on 8/9/2015.
@@ -291,18 +291,10 @@ public class GoogleOAuthActivity extends Activity implements
                         @Override
                         protected Void doInBackground(DynamoDBQueryExpression... queryExpressions) {
 
-                            boolean containsContact = false;
-                            for(int i = 0; i < MainActivity.user.getContacts().size(); i++) {
-                                User contact = MainActivity.mapper.load(User.class, MainActivity.user.getContacts().get(i));
-                                if(contact.getId().equals(((User) queryExpressions[0].getHashKeyValues()).getId())) {
-                                    containsContact = true;
-                                    System.out.println("JGIEJGIEIF");
-                                }
-                            }
-                            if(!containsContact) {
-                                PaginatedQueryList<User> result = MainActivity.mapper.query(User.class, queryExpressions[0]);
+                            PaginatedQueryList<User> result = MainActivity.mapper.query(User.class, queryExpressions[0]);
 
-                                if (result.size() > 0) {
+                            if (result.size() > 0) {
+                                if(!MainActivity.user.getContacts().contains(result.get(0).getId())) {
                                     MainActivity.user.addContact(result.get(0).getId());
                                 }
                             }

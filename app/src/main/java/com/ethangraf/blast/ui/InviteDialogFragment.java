@@ -1,4 +1,4 @@
-package com.ethangraf.blast;
+package com.ethangraf.blast.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,7 +11,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import java.util.Arrays;
+import com.ethangraf.blast.R;
+import com.ethangraf.blast.database.Group;
 
 /**
  * Created by Ethan on 8/29/2015.
@@ -22,7 +23,7 @@ public class InviteDialogFragment extends DialogFragment {
     public InviteAdapter mInviteAdapter;
     public RecyclerView.LayoutManager mInviteLayoutManager;
 
-    private static final String planets[] = new String[] {"Sun", "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"};
+    private Group group;
 
     /* The activity that creates an instance of this dialog fragment must
      * implement this interface in order to receive event callbacks.
@@ -34,6 +35,10 @@ public class InviteDialogFragment extends DialogFragment {
 
     // Use this instance of the interface to deliver action events
     InviteDialogListener mListener;
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
 
     // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
     @Override
@@ -62,7 +67,7 @@ public class InviteDialogFragment extends DialogFragment {
         mInviteLayoutManager = new LinearLayoutManager(getActivity());
         mInviteView.setLayoutManager(mInviteLayoutManager);
 
-        mInviteAdapter = new InviteAdapter();
+        mInviteAdapter = new InviteAdapter(group);
         mInviteView.setAdapter(mInviteAdapter);
 
         // use this setting to improve performance if you know that changes

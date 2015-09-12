@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <!-- Search, should appear as action button -->
+    <item android:id="@+id/action_invites"
+        android:icon="@mipmap/ic_drafts_white_24dp"
+        android:title="@string/invites"
+        app:showAsAction="ifRoom" />
     <item android:id="@+id/action_add_group"
         android:icon="@mipmap/ic_group_add_white_24dp"
         android:title="@string/add_group"

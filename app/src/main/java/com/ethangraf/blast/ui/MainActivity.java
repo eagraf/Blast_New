@@ -1,4 +1,4 @@
-package com.ethangraf.blast;
+package com.ethangraf.blast.ui;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.ethangraf.blast.R;
 import com.ethangraf.blast.database.Group;
 import com.ethangraf.blast.database.User;
 import com.ethangraf.blast.gcmservices.RegistrationIntentService;

@@ -1,4 +1,4 @@
-package com.ethangraf.blast;
+package com.ethangraf.blast.ui;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,6 +26,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
+import com.ethangraf.blast.R;
 import com.ethangraf.blast.database.Group;
 import com.ethangraf.blast.database.Message;
 import com.ethangraf.blast.database.User;
@@ -99,6 +100,7 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
         if(group.getSubscribers().size() == 1) {
             if(group.getSubscribers().get(0).equals(group.getOwner()) && MainActivity.user.getId().equals(group.getOwner())) {
                 InviteDialogFragment dialog = new InviteDialogFragment();
+                dialog.setGroup(group);
                 dialog.show(getSupportFragmentManager(), "NewInviteDialogFragment");
             }
         }
@@ -260,6 +262,17 @@ public class MessageActivity extends AppCompatActivity implements PopupMenu.OnMe
     @Override
     public void onDialogPositiveClick(InviteDialogFragment dialog) {
 
+        new AsyncTask<InviteDialogFragment, Void, Void>() {
+            @Override
+            protected Void doInBackground(InviteDialogFragment... dialog) {
+                for (int i = 0; i < dialog[0].mInviteAdapter.getInvited().size(); i++) {
+                    User user = MainActivity.mapper.load(User.class, dialog[0].mInviteAdapter.getInvited().get(i));
+                    user.addNewInvitation(group.getGroupID());
+                    user.addInvitation(group.getGroupID());
+                }
+                return null;
+            }
+        }.execute(dialog);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.ethangraf.blast;
+package com.ethangraf.blast.ui;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import com.ethangraf.blast.R;
 import com.ethangraf.blast.database.Group;
 
 /**
