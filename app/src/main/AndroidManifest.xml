@@ -18,8 +18,10 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/BlastTheme" >
-        <activity
+        android:theme="@style/BlastTheme"
+        android:name="android.support.multidex.MultiDexApplication">
+
+    <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name" >
         </activity>
