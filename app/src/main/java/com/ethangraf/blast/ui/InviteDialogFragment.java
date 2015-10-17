@@ -12,7 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.ethangraf.blast.R;
-import com.ethangraf.blast.database.Group;
+import com.ethangraf.blast.database.model.Group;
 
 /**
  * Created by Ethan on 8/29/2015.

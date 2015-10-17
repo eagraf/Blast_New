@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.ethangraf.blast.R;
-import com.ethangraf.blast.database.Group;
+import com.ethangraf.blast.database.model.Group;
 
 /**
  * Created by Ethan on 8/8/2015.

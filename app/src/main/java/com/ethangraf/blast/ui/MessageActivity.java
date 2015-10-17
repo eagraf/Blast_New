@@ -27,10 +27,10 @@ import android.widget.Toast;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
 import com.ethangraf.blast.R;
-import com.ethangraf.blast.database.Group;
-import com.ethangraf.blast.database.Message;
-import com.ethangraf.blast.database.User;
-import com.ethangraf.blast.gcmservices.MyGcmListenerService;
+import com.ethangraf.blast.database.model.Group;
+import com.ethangraf.blast.database.model.Message;
+import com.ethangraf.blast.database.model.User;
+import com.ethangraf.blast.gcm.MyGcmListenerService;
 
 import java.util.List;
 

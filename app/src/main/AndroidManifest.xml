@@ -84,25 +84,25 @@
             </intent-filter>
         </receiver>
         <service
-            android:name="com.ethangraf.blast.gcmservices.MyGcmListenerService"
+            android:name="com.ethangraf.blast.gcm.MyGcmListenerService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
         <service
-            android:name="com.ethangraf.blast.gcmservices.MyInstanceIDListenerService"
+            android:name="com.ethangraf.blast.gcm.MyInstanceIDListenerService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID"/>
             </intent-filter>
         </service>
         <service
-            android:name="com.ethangraf.blast.gcmservices.RegistrationIntentService"
+            android:name="com.ethangraf.blast.gcm.RegistrationIntentService"
             android:exported="false">
         </service>
         <receiver
-            android:name=".gcmservices.GcmNotificationRaisingBroadcastReceiver"
+            android:name=".gcm.GcmNotificationRaisingBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.ethangraf.blast.message_updated"/>

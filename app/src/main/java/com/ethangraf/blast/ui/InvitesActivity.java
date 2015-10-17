@@ -1,7 +1,6 @@
 package com.ethangraf.blast.ui;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -11,11 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.ethangraf.blast.R;
-import com.ethangraf.blast.database.Group;
-import com.ethangraf.blast.database.User;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Ethan on 9/10/2015.

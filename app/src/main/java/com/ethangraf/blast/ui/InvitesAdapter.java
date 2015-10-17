@@ -6,17 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
 import com.ethangraf.blast.R;
-import com.ethangraf.blast.database.Group;
-import com.ethangraf.blast.database.Message;
-import com.ethangraf.blast.database.User;
+import com.ethangraf.blast.database.model.Group;
 
 import java.util.ArrayList;
 import java.util.List;

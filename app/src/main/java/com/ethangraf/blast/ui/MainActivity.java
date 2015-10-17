@@ -17,9 +17,10 @@ import android.widget.TextView;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.ethangraf.blast.R;
-import com.ethangraf.blast.database.Group;
-import com.ethangraf.blast.database.User;
-import com.ethangraf.blast.gcmservices.RegistrationIntentService;
+import com.ethangraf.blast.database.CacheManager;
+import com.ethangraf.blast.database.model.Group;
+import com.ethangraf.blast.database.model.User;
+import com.ethangraf.blast.gcm.RegistrationIntentService;
 
 import java.util.UUID;
 
@@ -43,12 +44,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public static User user;
 
+    public CacheManager cacheManager;
+
     public final static String MESSAGE_VIEW_GROUP = "com.ethangraf.blast.GROUP";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        cacheManager = new CacheManager(this);
+        new AsyncTask<CacheManager, Void, Void>() {
+            @Override
+            protected Void doInBackground(CacheManager... params) {
+                params[0].getReadableDatabase();
+                params[0].getWritableDatabase();
+                return null;
+            }
+        }.execute();
 
         //Initialize some navigation drawer stuff.
         mDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_layout);

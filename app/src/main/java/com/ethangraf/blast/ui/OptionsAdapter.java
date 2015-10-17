@@ -11,8 +11,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ethangraf.blast.R;
-import com.ethangraf.blast.database.Group;
-import com.ethangraf.blast.database.User;
+import com.ethangraf.blast.database.model.Group;
+import com.ethangraf.blast.database.model.User;
 
 import java.util.List;
 
