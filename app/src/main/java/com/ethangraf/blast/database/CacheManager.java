@@ -24,9 +24,9 @@ public class CacheManager extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Cache.db";
 
-    public GroupsHelper groupsHelper;
-    public UsersHelper usersHelper;
-    public MessagesHelper messagesHelper;
+    public GroupsHelper groupsHelper = new GroupsHelper();
+    public UsersHelper usersHelper = new UsersHelper();
+    public MessagesHelper messagesHelper = new MessagesHelper();
 
     public CacheManager(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -51,7 +51,7 @@ public class CacheManager extends SQLiteOpenHelper {
     /*
      * Helper class for the Group table.
      */
-    class GroupsHelper {
+    public class GroupsHelper {
 
         //Place a new group into the database.
         public void putGroup(SQLiteDatabase db, Group group) {
@@ -60,8 +60,8 @@ public class CacheManager extends SQLiteOpenHelper {
             values.put(DatabaseContract.TableGroup.COLUMN_DISPLAY_NAME, group.getDisplayName());
             values.put(DatabaseContract.TableGroup.COLUMN_OWNER, group.getOwner());
             values.put(DatabaseContract.TableGroup.COLUMN_OWNER_NAME, group.getOwnerName());
-            values.put(DatabaseContract.TableGroup.COLUMN_EDITORS, convertArrayToString((String[]) (group.getEditors().toArray())));
-            values.put(DatabaseContract.TableGroup.COLUMN_SUBSCRIBERS, convertArrayToString((String[]) (group.getSubscribers().toArray())));
+            values.put(DatabaseContract.TableGroup.COLUMN_EDITORS, convertArrayToString(group.getEditors()));
+            values.put(DatabaseContract.TableGroup.COLUMN_SUBSCRIBERS, convertArrayToString(group.getSubscribers()));
 
             //Actually place the group in.
             long newRowId = db.insert(
@@ -77,8 +77,8 @@ public class CacheManager extends SQLiteOpenHelper {
             values.put(DatabaseContract.TableGroup.COLUMN_DISPLAY_NAME, group.getDisplayName());
             values.put(DatabaseContract.TableGroup.COLUMN_OWNER, group.getOwner());
             values.put(DatabaseContract.TableGroup.COLUMN_OWNER_NAME, group.getOwnerName());
-            values.put(DatabaseContract.TableGroup.COLUMN_EDITORS, convertArrayToString((String[]) (group.getEditors().toArray())));
-            values.put(DatabaseContract.TableGroup.COLUMN_SUBSCRIBERS, convertArrayToString((String[]) (group.getSubscribers().toArray())));
+            values.put(DatabaseContract.TableGroup.COLUMN_EDITORS, convertArrayToString(group.getEditors()));
+            values.put(DatabaseContract.TableGroup.COLUMN_SUBSCRIBERS, convertArrayToString(group.getSubscribers()));
 
             //Update the group with the matching group ID.
             long newRowId = db.update(
@@ -98,13 +98,13 @@ public class CacheManager extends SQLiteOpenHelper {
             //Iterate through the cursor and fill up each group object.
             cursor.moveToFirst();
             for(int i = 0; i < cursor.getCount(); i++) {
-
+                groups.add(new Group());
                 groups.get(i).setGroupID(cursor.getString(cursor.getColumnIndex(DatabaseContract.TableGroup.COLUMN_GROUP_ID)));
                 groups.get(i).setDisplayName(cursor.getString(cursor.getColumnIndex(DatabaseContract.TableGroup.COLUMN_DISPLAY_NAME)));
                 groups.get(i).setOwner(cursor.getString(cursor.getColumnIndex(DatabaseContract.TableGroup.COLUMN_OWNER)));
                 groups.get(i).setOwnerName(cursor.getString(cursor.getColumnIndex(DatabaseContract.TableGroup.COLUMN_OWNER_NAME)));
-                groups.get(i).setEditors(Arrays.asList(convertStringToArray(cursor.getString(cursor.getColumnIndex(DatabaseContract.TableGroup.COLUMN_EDITORS)))));
-                groups.get(i).setSubscribers(Arrays.asList(convertStringToArray(cursor.getString(cursor.getColumnIndex(DatabaseContract.TableGroup.COLUMN_GROUP_ID)))));
+                groups.get(i).setEditors(convertStringToArray(cursor.getString(cursor.getColumnIndex(DatabaseContract.TableGroup.COLUMN_EDITORS))));
+                groups.get(i).setSubscribers(convertStringToArray(cursor.getString(cursor.getColumnIndex(DatabaseContract.TableGroup.COLUMN_GROUP_ID))));
 
                 cursor.moveToNext();
             }
@@ -115,7 +115,7 @@ public class CacheManager extends SQLiteOpenHelper {
     /*
      * Helper class for the User table.
      */
-    class UsersHelper {
+    public class UsersHelper {
 
         //Put a User into the database.
         public void putUser(SQLiteDatabase db, User user) {
@@ -124,11 +124,11 @@ public class CacheManager extends SQLiteOpenHelper {
             values.put(DatabaseContract.TableUsers.COLUMN_NAME, user.getName());
             values.put(DatabaseContract.TableUsers.COLUMN_EMAIL, user.getEmail());
             values.put(DatabaseContract.TableUsers.COLUMN_GOOGLE_ID, user.getGoogleId());
-            values.put(DatabaseContract.TableUsers.COLUMN_CONTACTS, convertArrayToString((String[]) (user.getContacts().toArray())));
-            values.put(DatabaseContract.TableUsers.COLUMN_SUBSCRIPTIONS, convertArrayToString((String[]) (user.getSubscriptions().toArray())));
-            values.put(DatabaseContract.TableUsers.COLUMN_INVITATIONS, convertArrayToString((String[]) (user.getInvitations().toArray())));
-            values.put(DatabaseContract.TableUsers.COLUMN_NEW_INVITATIONS, convertArrayToString((String[]) (user.getNewInvitations().toArray())));
-            values.put(DatabaseContract.TableUsers.COLUMN_SNSENDPOINTS, convertArrayToString((String[]) (user.getEndpoints().toArray())));
+            values.put(DatabaseContract.TableUsers.COLUMN_CONTACTS, convertArrayToString(user.getContacts()));
+            values.put(DatabaseContract.TableUsers.COLUMN_SUBSCRIPTIONS, convertArrayToString(user.getSubscriptions()));
+            values.put(DatabaseContract.TableUsers.COLUMN_INVITATIONS, convertArrayToString(user.getInvitations()));
+            values.put(DatabaseContract.TableUsers.COLUMN_NEW_INVITATIONS, convertArrayToString(user.getNewInvitations()));
+            values.put(DatabaseContract.TableUsers.COLUMN_SNSENDPOINTS, convertArrayToString(user.getEndpoints()));
 
             long newRowId = db.insert(
                     DatabaseContract.TableUsers.TABLE_NAME,
@@ -141,7 +141,7 @@ public class CacheManager extends SQLiteOpenHelper {
     /*
      * Helper class for the Message table.
      */
-    class MessagesHelper {
+    public class MessagesHelper {
 
         //Put a Message into the database.
         public void putMessage(SQLiteDatabase db, Message message) {
@@ -180,20 +180,16 @@ public class CacheManager extends SQLiteOpenHelper {
 
     //These methods are for converting arrays into strings and back.
     public static String strSeparator = "__,__";
-    public static String convertArrayToString(String[] array){
-        String str = "";
-        for (int i = 0;i<array.length; i++) {
-            str = str+array[i];
-            // Do not append comma at the end of last element
-            if(i<array.length-1){
-                str = str+strSeparator;
-            }
+    public static String convertArrayToString(List<String> array){
+        StringBuilder sb = new StringBuilder();
+        for (String str : array){
+            sb.append(str);
+            sb.append(strSeparator);
         }
-        return str;
+        return sb.toString();
     }
-    public static String[] convertStringToArray(String str){
-        String[] arr = str.split(strSeparator);
-        return arr;
+    public static List<String> convertStringToArray(String str){
+        return Arrays.asList(str.split(strSeparator));
     }
 
 

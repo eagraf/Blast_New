@@ -14,7 +14,7 @@ public class DatabaseContract {
     /* Inner class that defines the table contents */
     public static abstract class TableGroup implements BaseColumns {
         public static final String TABLE_NAME = "Groups";
-        public static final String COLUMN_GROUP_ID = "Group ID";
+        public static final String COLUMN_GROUP_ID = "GroupID";
         public static final String COLUMN_DISPLAY_NAME = "DisplayName";
         public static final String COLUMN_EDITORS = "Editors";
         public static final String COLUMN_OWNER = "Owner";
@@ -28,7 +28,7 @@ public class DatabaseContract {
                         + COLUMN_EDITORS + " TEXT,"
                         + COLUMN_OWNER + " TEXT,"
                         + COLUMN_OWNER_NAME + " TEXT,"
-                        + COLUMN_SUBSCRIBERS + " TEXT,"
+                        + COLUMN_SUBSCRIBERS + " TEXT"
                         +" )";
 
         public static final String DELETE_ENTRIES =
@@ -66,7 +66,7 @@ public class DatabaseContract {
 
     public static abstract class TableMessages implements BaseColumns {
         public static final String TABLE_NAME = "Messages";
-        public static final String COLUMN_GROUP_ID = "Group ID";
+        public static final String COLUMN_GROUP_ID = "GroupID";
         public static final String COLUMN_DATE_POSTED = "DatePosted";
         public static final String COLUMN_AUTHOR = "Author";
         public static final String COLUMN_BODY = "Body";
@@ -80,7 +80,7 @@ public class DatabaseContract {
                         + COLUMN_AUTHOR + " TEXT,"
                         + COLUMN_BODY + " TEXT,"
                         + COLUMN_SUBJECT + " TEXT,"
-                        + COLUMN_ATTACHMENTS + " TEXT,"
+                        + COLUMN_ATTACHMENTS + " TEXT"
                         +" )";
 
         public static final String DELETE_ENTRIES =
