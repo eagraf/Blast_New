@@ -4,8 +4,12 @@ package com.ethangraf.blast.ui;
  * Created by Da-Jin on 8/9/2015.
  */
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.AsyncTask;
@@ -62,6 +66,11 @@ public class GoogleOAuthActivity extends Activity implements
     private ConnectionResult mGoogleConnectionResult;
     public static CognitoCachingCredentialsProvider credentialsProvider;
 
+    public static final String AUTHORITY = "com.ethangraf.blast";
+    public static final String ACCOUNT_TYPE = "com.ethangraf";
+    public static final String ACCOUNT = "dummyacount";
+    Account mAccount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +96,29 @@ public class GoogleOAuthActivity extends Activity implements
                 mGoogleApiClient.connect();
             }
         }
+
+        //For SyncAdapter, doesn't really do anything
+        mAccount = CreateSyncAccount(this);
+
+        Bundle settingsBundle = new Bundle();
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        settingsBundle.putBoolean(
+                ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        ContentResolver.requestSync(mAccount,GoogleOAuthActivity.AUTHORITY,settingsBundle);
+
+    }
+
+    public static Account CreateSyncAccount(Context context) {
+        Account newAccount = new Account(ACCOUNT, ACCOUNT_TYPE);
+        AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
+
+        if(accountManager.addAccountExplicitly(newAccount, null, null)){
+            return newAccount;
+        }else{
+            Log.e("AccountError", "Some kind of error with AccountManager");
+        }
+        return null;
     }
 
     /* A helper method to resolve the current ConnectionResult error. */

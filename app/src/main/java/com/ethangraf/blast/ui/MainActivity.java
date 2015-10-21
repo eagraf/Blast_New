@@ -1,16 +1,18 @@
 package com.ethangraf.blast.ui;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -57,11 +59,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         new AsyncTask<CacheManager, Void, Void>() {
             @Override
             protected Void doInBackground(CacheManager... params) {
-                params[0].getReadableDatabase();
-                params[0].getWritableDatabase();
+                CacheManager manager = params[0];
+                SQLiteDatabase database = manager.getWritableDatabase();
+                for(String sub :user.getSubscriptions()){
+                    //manager.groupsHelper.putGroup(database, mapper.load(Group.class, sub));
+                }
                 return null;
             }
-        }.execute();
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                Log.d("DATABASE",cacheManager.groupsHelper.getGroups(cacheManager.getReadableDatabase()).toString());
+            }
+        }.execute(cacheManager);
 
         //Initialize some navigation drawer stuff.
         mDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_layout);
@@ -127,11 +137,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        System.out.println(outState);
+        //System.out.println(outState);
         fragmentManager.putFragment(outState, "fragment", currentFragment);
-        System.out.println(outState);
+        //System.out.println(outState);
         super.onSaveInstanceState(outState);
-        System.out.println(outState);
+        //System.out.println(outState);
     }
 
    /* @Override
