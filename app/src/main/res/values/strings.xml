@@ -54,4 +54,6 @@
     <!--Inviting-->
     <string name="invite">Invite People</string>
 
+    <!--Error Messages-->
+    <string name="pick_account">You must pick an account to log in</string>
 </resources>

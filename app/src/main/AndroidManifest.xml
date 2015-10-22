@@ -77,6 +77,9 @@
                 android:value=".ui.MainActivity" />
         </activity>
 
+        <activity android:name=".ui.PickAccountActivity"/>
+
+
 
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"

@@ -26,7 +26,8 @@ public class BlastSyncAdapter extends AbstractThreadedSyncAdapter {
 
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-        Log.d("BlastSyncAdapter","syncing");
+        Log.d("BlastSyncAdapter","syncing with account name:"+account.name);
+
         CacheManager manager = new CacheManager(getContext());
         SQLiteDatabase database = manager.getWritableDatabase();
         for(String sub :MainActivity.user.getSubscriptions()){//TODO NULL POINTER HERE
